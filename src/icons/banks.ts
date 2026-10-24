@@ -79,7 +79,7 @@ export const BANKS: Record<string, Bank> = {
   },
   'bank-bot': {
     name: '臺灣銀行',
-    color: '#e3abca',
+    color: '#ab005f',
     body: img('bot'),
   },
   'bank-tcb': {
