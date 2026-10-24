@@ -59,6 +59,9 @@ const topCats = computed(() =>
 )
 const subCats = computed(() => (parentId.value ? categories.value.filter((c) => c.parentId === parentId.value && !c.hidden) : []))
 const recentCats = ref<string[]>([])
+const recentShown = computed(() =>
+  recentCats.value.filter((i) => categoryMap.value.get(i)?.kind === kind.value && !categoryMap.value.get(i)?.hidden).slice(0, 5),
+)
 
 function pickTop(id: string) {
   parentId.value = id
@@ -97,7 +100,7 @@ onMounted(async () => {
   const bookTxs = await db.transactions.where('bookId').equals(ui.bookId).reverse().sortBy('createdAt')
   const counts = new Map<string, number>()
   for (const t of bookTxs.slice(0, 80)) if (t.categoryId) counts.set(t.categoryId, (counts.get(t.categoryId) ?? 0) + 1)
-  recentCats.value = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 6).map(([id]) => id)
+  recentCats.value = [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([id]) => id)
 
   const copyFrom = route.query.copy ? await db.transactions.get(String(route.query.copy)) : undefined
   const src = props.id ? await db.transactions.get(props.id) : copyFrom
@@ -254,12 +257,16 @@ const title = computed(() => (existing.value ? '編輯' : '記一筆'))
     </div>
 
     <template v-if="kind !== 'transfer'">
-      <div v-if="recentCats.length && !existing" class="chips recent">
-        <span class="small muted">最近</span>
-        <button v-for="id in recentCats.filter((i) => categoryMap.get(i)?.kind === kind && !categoryMap.get(i)?.hidden)" :key="id" class="chip" :class="{ on: categoryId === id }" @click="categoryId = id; parentId = categoryMap.get(id)?.parentId ?? id">
-          <CatIcon :icon="categoryMap.get(id)?.icon" :color="categoryMap.get(id)?.color" :size="24" /> {{ categoryMap.get(id)?.name }}
-        </button>
-      </div>
+      <template v-if="recentShown.length && !existing">
+        <div class="small muted recent-label">最近使用</div>
+        <div class="cat-grid recent">
+          <button v-for="id in recentShown" :key="id" class="cat" :class="{ on: categoryId === id }" @click="categoryId = id; parentId = categoryMap.get(id)?.parentId ?? id">
+            <CatIcon :icon="categoryMap.get(id)?.icon" :color="categoryMap.get(id)?.color" :size="46" />
+            <span>{{ categoryMap.get(id)?.name }}</span>
+          </button>
+        </div>
+        <div class="small muted recent-label">全部分類</div>
+      </template>
       <div class="cat-grid">
         <button v-for="c in topCats" :key="c.id" class="cat" :class="{ on: parentId === c.id }" @click="pickTop(c.id)">
           <CatIcon :icon="c.icon" :color="c.color" :size="46" />
@@ -337,8 +344,7 @@ const title = computed(() => (existing.value ? '編輯' : '記一筆'))
 .value { flex: 1; text-align: right; font-size: 2.125rem; font-weight: 700; overflow-x: auto; white-space: nowrap; }
 .value.transfer { color: var(--text); }
 .fx { margin: 0 6px 10px; }
-.recent { align-items: center; margin: 4px 0 10px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
-.recent > * { flex: none; }
+.recent-label { margin: 2px 4px 6px; }
 .cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px 4px; margin-bottom: 10px; }
 .cat { border: 0; background: transparent; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 0.75rem; padding: 2px 0; }
 .cat .cat-icon { transition: transform 0.1s; }
