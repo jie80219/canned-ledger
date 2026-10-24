@@ -123,7 +123,10 @@ async function save() {
       foreignFeeRate: (Number(feePct.value) || 0) / 100,
       minimumRate: (Number(minPct.value) || 0) / 100,
     }
-    if (!acc.credit.openingDate || acc.initialBalance !== loadedInitial) acc.credit.openingDate = today()
+    if (!acc.credit.openingAt || acc.initialBalance !== loadedInitial) {
+      acc.credit.openingDate = today()
+      acc.credit.openingAt = Date.now()
+    }
     if (acc.credit.autopay !== 'off' && !acc.credit.payFromAccountId) return ui.notify('開啟自動扣款需要選擇扣款帳戶')
   } else delete acc.credit
   await saveAccount(acc)
@@ -189,7 +192,7 @@ async function unarchive() {
         <input v-model="a.includeInNetWorth" type="checkbox" class="switch" />
       </div>
     </div>
-    <p v-if="isDebt" class="help">{{ a.type === 'credit' ? '填目前還沒出帳的消費，已經繳清的帳單不用算。可用額度 = 信用額度 − 未出帳金額。' : '直接輸入正數，例如欠 3,000 就填 3000。' }}</p>
+    <p v-if="isDebt" class="help">{{ a.type === 'credit' ? '填銀行 App 上目前的未出帳金額，之前記過的帳不用管，會以這個數字為準。可用額度 = 信用額度 − 未出帳金額。' : '直接輸入正數，例如欠 3,000 就填 3000。' }}</p>
 
     <template v-if="a.type === 'credit' && a.credit">
       <div class="section-label">帳單設定</div>

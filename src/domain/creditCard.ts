@@ -1,6 +1,6 @@
 import type { CreditSettings, Transaction } from '../db/types'
 import { addDays, clampDay, parse, shiftYM, type DateStr } from './dates'
-import { balanceOf } from './balance'
+import { afterOpening, balanceOf } from './balance'
 
 export interface Cycle {
   start: DateStr
@@ -74,6 +74,7 @@ export function computeDue(
   txs: Transaction[],
   cyc: Cycle,
 ): DueInfo {
+  txs = txs.filter((t) => afterOpening(c, t))
   const opening = c.openingDate && cyc.end < c.openingDate ? 0 : initialBalance
   const statement = Math.max(0, -balanceOf(cardId, opening, txs, cyc.end))
   let paidAfter = 0
@@ -104,6 +105,7 @@ export function cardSummary(
   txs: Transaction[],
   today: DateStr,
 ): CardSummary {
+  txs = txs.filter((t) => afterOpening(c, t))
   const current = cycleContaining(c, today)
   const lastClosed = previousCycle(c, current)
   const debt = Math.max(0, -balanceOf(cardId, initialBalance, txs, today))

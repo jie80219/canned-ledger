@@ -25,7 +25,8 @@ export interface CreditSettings {
   autopayConfirm: boolean // 先產生待確認，再由使用者確認
   autopaySince?: DateStr // 從這天之後的繳款日才自動產生，避免補出舊帳
   foreignFeeRate: number // 海外交易手續費
-  openingDate?: DateStr // 期初餘額視為這天所在週期的未出帳消費
+  openingDate?: DateStr // 期初餘額視為這天所在週期的未出帳消費，之前的交易不再計入卡片
+  openingAt?: number // 設定期初的時間，同一天在這之前記的交易也不計入
   display?: 'spent' | 'available' // 帳戶列表顯示已刷金額（預設）或可用額度
 }
 

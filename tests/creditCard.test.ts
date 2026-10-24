@@ -78,3 +78,20 @@ describe('期初餘額視為未出帳', () => {
     expect(computeDue('card', -10024, c, [], cycleContaining(c, '2026-10-01')).due).toBe(0)
   })
 })
+
+describe('中途設定期初', () => {
+  const at = Date.parse('2026-10-25T02:40:00')
+  const c = credit({ statementDay: 5, dueDay: 22, creditLimit: 20000, openingDate: '2026-10-25', openingAt: at })
+  const old = [spend('2026-09-20', 5000), spend('2026-10-10', 4272)]
+  const later = { ...spend('2026-10-25', 300), createdAt: at + 1000 }
+  it('之前記的帳不再計入，只看期初金額', () => {
+    const s = cardSummary('card', -10024, c, old, '2026-10-25')
+    expect([s.debt, s.billedUnpaid, s.unbilled, s.available]).toEqual([10024, 0, 10024, 9976])
+  })
+  it('設定之後記的帳照常累加，帳戶列表餘額一致', async () => {
+    const { balances } = await import('../src/domain/balance')
+    const s = cardSummary('card', -10024, c, [...old, later], '2026-10-25')
+    expect([s.unbilled, s.available]).toEqual([10324, 9676])
+    expect(balances([{ id: 'card', initialBalance: -10024, credit: c }], [...old, later]).get('card')).toBe(-10324)
+  })
+})
