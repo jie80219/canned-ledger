@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { VueDraggable } from 'vue-draggable-plus'
 import type { Account, AccountType } from '../db/types'
 import { useBalances } from '../composables/useBalances'
 import { useConverter } from '../composables/useRates'
 import { cardSummary } from '../domain/creditCard'
 import { today } from '../domain/dates'
 import { convert, formatMoney } from '../domain/money'
+import { reorder } from '../db/repo'
 import CatIcon from '../components/CatIcon.vue'
 
 const { accounts, currency, allTxs, balanceMap } = useBalances()
@@ -21,6 +23,13 @@ const GROUPS: Array<{ type: AccountType; label: string }> = [
 ]
 
 const visible = computed(() => accounts.value.filter((a) => !a.archived))
+
+// 排序模式：每組各自一份可拖曳的清單，存的時候照分組順序整串寫回
+const sorting = ref(false)
+const groupLists = ref<Record<string, Account[]>>({})
+watch(visible, (v) => (groupLists.value = Object.fromEntries(GROUPS.map((g) => [g.type, v.filter((a) => a.type === g.type)]))), { immediate: true })
+const saveOrder = () => reorder('accounts', GROUPS.flatMap((g) => groupLists.value[g.type] ?? []))
+
 const archived = computed(() => accounts.value.filter((a) => a.archived))
 
 function toBook(a: Account, v: number) {
@@ -55,7 +64,8 @@ const summaries = computed(() => {
   <main class="page">
     <header class="topbar">
       <h1>帳戶</h1>
-      <RouterLink to="/accounts/new" class="icon-btn" aria-label="新增帳戶">＋</RouterLink>
+      <button v-if="visible.length > 1" class="text-btn" @click="sorting = !sorting">{{ sorting ? '完成' : '排序' }}</button>
+      <RouterLink v-if="!sorting" to="/accounts/new" class="icon-btn" aria-label="新增帳戶">＋</RouterLink>
     </header>
 
     <section class="card worth">
@@ -70,7 +80,14 @@ const summaries = computed(() => {
     <template v-for="g in GROUPS" :key="g.type">
       <template v-if="visible.some((a) => a.type === g.type)">
         <div class="section-label">{{ g.label }}</div>
-        <div class="list">
+        <VueDraggable v-if="sorting" v-model="groupLists[g.type]" class="list" handle=".handle" :animation="150" :force-fallback="true" @end="saveOrder">
+          <div v-for="a in groupLists[g.type]" :key="a.id" class="row">
+            <CatIcon :icon="a.icon" :color="a.color" :size="38" />
+            <span class="grow">{{ a.name }}</span>
+            <span class="handle" aria-label="拖曳排序">≡</span>
+          </div>
+        </VueDraggable>
+        <div v-else class="list">
           <RouterLink v-for="a in visible.filter((a) => a.type === g.type)" :key="a.id" :to="`/accounts/${a.id}`" class="row">
             <CatIcon :icon="a.icon" :color="a.color" :size="38" />
             <span class="grow">
@@ -105,6 +122,9 @@ const summaries = computed(() => {
 </template>
 
 <style scoped>
+.topbar .text-btn { margin-left: auto; border: 0; background: transparent; color: var(--accent); font: inherit; font-weight: 600; padding: 6px 8px; }
+.handle { flex: none; width: 34px; height: 34px; display: grid; place-items: center; color: var(--muted); font-size: 1.25rem; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+.sortable-ghost { opacity: 0.4; }
 .worth .big { font-size: 1.875rem; font-weight: 700; }
 .split { display: flex; gap: 18px; font-size: 0.8125rem; color: var(--muted); margin-top: 4px; }
 </style>

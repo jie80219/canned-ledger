@@ -98,6 +98,30 @@ export async function deleteCategory(id: string) {
   return 'deleted' as const
 }
 
+/**
+ * 換到另一個大類底下（parentId），或變成大類（undefined）。
+ * 只有兩層，所以還有子分類的大類不能變成子分類。
+ */
+export async function moveCategory(id: string, parentId?: string) {
+  return db.transaction('rw', db.categories, async () => {
+    const c = await db.categories.get(id)
+    if (!c) return 'missing' as const
+    if (c.parentId === parentId) return 'ok' as const
+    const { parentId: _old, ...rest } = c
+    if (parentId) {
+      const p = await db.categories.get(parentId)
+      if (!p || p.id === id || p.parentId || p.kind !== c.kind) return 'invalid' as const
+      if (await db.categories.where('parentId').equals(id).count()) return 'has-children' as const
+      const n = await db.categories.where('parentId').equals(parentId).count()
+      await db.categories.put(stamp({ ...rest, parentId, color: p.color, sortOrder: n }))
+    } else {
+      const n = await db.categories.where('bookId').equals(c.bookId).filter((x) => x.kind === c.kind && !x.parentId).count()
+      await db.categories.put(stamp({ ...rest, sortOrder: n }))
+    }
+    return 'ok' as const
+  })
+}
+
 export async function reorder<T extends { id: string; sortOrder: number }>(table: 'categories' | 'accounts', items: T[]) {
   const now = Date.now()
   await db.transaction('rw', db.table(table), async () => {

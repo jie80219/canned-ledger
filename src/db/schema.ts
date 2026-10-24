@@ -1,5 +1,5 @@
 import Dexie, { type Table } from 'dexie'
-import type { Account, Book, Budget, Category, FxRate, Meta, Recurring, Transaction } from './types'
+import type { Account, Asset, Book, Budget, Category, FxRate, Meta, Recurring, Transaction } from './types'
 
 export const DB_NAME = 'tuntun-ledger'
 /** 改名前的資料庫名稱，啟動時搬到新名稱 */
@@ -14,6 +14,7 @@ export class LedgerDB extends Dexie {
   budgets!: Table<Budget, string>
   fxRates!: Table<FxRate, [string, string, string]>
   meta!: Table<Meta, string>
+  assets!: Table<Asset, string>
 
   constructor(name = DB_NAME) {
     super(name)
@@ -28,6 +29,7 @@ export class LedgerDB extends Dexie {
       fxRates: '[base+quote+date], date',
       meta: 'key',
     })
+    this.version(2).stores({ assets: 'id' })
   }
 }
 
@@ -40,6 +42,7 @@ export const TABLES = [
   'budgets',
   'fxRates',
   'meta',
+  'assets',
 ] as const
 
 export type TableName = (typeof TABLES)[number]

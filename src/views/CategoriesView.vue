@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { VueDraggable } from 'vue-draggable-plus'
 import { uid } from '../db/schema'
 import type { Category, CategoryKind } from '../db/types'
-import { deleteCategory, reorder, saveCategory } from '../db/repo'
+import { deleteCategory, moveCategory, reorder, saveCategory } from '../db/repo'
 import { useBook } from '../composables/useBook'
 import { useUi } from '../stores/ui'
 import TopBar from '../components/TopBar.vue'
@@ -19,6 +20,14 @@ const COLORS = ['#e8a87c', '#85a8c9', '#c39bd3', '#7fb59a', '#e6b450', '#d98c9f'
 const tops = computed(() => categories.value.filter((c) => c.kind === kind.value && !c.parentId && (showHidden.value || !c.hidden)))
 const childrenOf = (id: string) => categories.value.filter((c) => c.parentId === id && (showHidden.value || !c.hidden))
 const expanded = ref<string>()
+
+// 拖曳用的本地清單，資料庫更新時跟著重建
+const topList = ref<Category[]>([])
+const kidList = ref<Category[]>([])
+watch(tops, (v) => (topList.value = [...v]), { immediate: true })
+watch(() => (expanded.value ? childrenOf(expanded.value) : []), (v) => (kidList.value = [...v]), { immediate: true })
+const saveTops = () => reorder('categories', topList.value)
+const saveKids = () => reorder('categories', kidList.value)
 
 // 編輯
 const edit = ref<Category | null>(null)
@@ -37,11 +46,24 @@ function openNew(parent?: Category) {
     updatedAt: 0,
   }
 }
+const parentOptions = computed(() => tops.value.filter((c) => c.id !== edit.value?.id))
+const isCustomColor = computed(() => !!edit.value && !COLORS.includes(edit.value.color))
 const isNew = computed(() => !!edit.value && !categories.value.some((c) => c.id === edit.value!.id))
 async function commit() {
   const c = edit.value!
   if (!c.name.trim()) return ui.notify('請輸入名稱')
-  await saveCategory({ ...c, name: c.name.trim() })
+  const orig = categories.value.find((x) => x.id === c.id)
+  const parent = categories.value.find((x) => x.id === c.parentId)
+  if (orig && orig.parentId !== c.parentId) {
+    // 換大類：先存其他欄位，再搬
+    await saveCategory({ ...c, parentId: orig.parentId, name: c.name.trim() })
+    const r = await moveCategory(c.id, c.parentId)
+    if (r === 'has-children') return ui.notify('底下還有子分類，請先把子分類移到別的大類')
+    if (r !== 'ok') return ui.notify('沒辦法移動這個分類')
+    edit.value = null
+    return
+  }
+  await saveCategory({ ...c, name: c.name.trim(), color: parent ? parent.color : c.color })
   // 改大類顏色時，子類一起換
   if (!c.parentId) for (const ch of childrenOf(c.id)) if (ch.color !== c.color) await saveCategory({ ...ch, color: c.color })
   edit.value = null
@@ -56,13 +78,6 @@ async function remove() {
   ui.notify(r === 'hidden' ? '分類已被使用，改為隱藏' : '已刪除')
   edit.value = null
 }
-async function move(list: Category[], i: number, d: -1 | 1) {
-  const j = i + d
-  if (j < 0 || j >= list.length) return
-  const next = [...list]
-  ;[next[i], next[j]] = [next[j], next[i]]
-  await reorder('categories', next)
-}
 </script>
 
 <template>
@@ -76,29 +91,29 @@ async function move(list: Category[], i: number, d: -1 | 1) {
     </div>
     <label class="small muted hidden-toggle"><input v-model="showHidden" type="checkbox" /> 顯示已隱藏</label>
 
-    <div class="list">
-      <template v-for="(c, i) in tops" :key="c.id">
+    <VueDraggable v-model="topList" class="list" handle=".handle" :animation="150" :force-fallback="true" @end="saveTops">
+      <div v-for="c in topList" :key="c.id" class="grp">
         <div class="row" :class="{ muted: c.hidden }">
           <button class="icon-tap" @click="edit = { ...c }"><CatIcon :icon="c.icon" :color="c.color" :size="38" /></button>
           <button class="grow plain left" @click="expanded = expanded === c.id ? undefined : c.id">
             {{ c.name }} <span v-if="c.hidden" class="badge">隱藏</span>
             <div class="sub">{{ childrenOf(c.id).length }} 個子分類 {{ expanded === c.id ? '▴' : '▾' }}</div>
           </button>
-          <button class="mini" aria-label="上移" :disabled="i === 0" @click="move(tops, i, -1)">↑</button>
-          <button class="mini" aria-label="下移" :disabled="i === tops.length - 1" @click="move(tops, i, 1)">↓</button>
+          <span class="handle" aria-label="拖曳排序">≡</span>
         </div>
         <template v-if="expanded === c.id">
-          <div v-for="(ch, j) in childrenOf(c.id)" :key="ch.id" class="row child" :class="{ muted: ch.hidden }">
-            <button class="icon-tap" @click="edit = { ...ch }"><CatIcon :icon="ch.icon" :color="ch.color" :size="34" /></button>
-            <button class="grow plain left" @click="edit = { ...ch }">{{ ch.name }} <span v-if="ch.hidden" class="badge">隱藏</span></button>
-            <button class="mini" aria-label="上移" :disabled="j === 0" @click="move(childrenOf(c.id), j, -1)">↑</button>
-            <button class="mini" aria-label="下移" :disabled="j === childrenOf(c.id).length - 1" @click="move(childrenOf(c.id), j, 1)">↓</button>
-          </div>
+          <VueDraggable v-model="kidList" handle=".handle" :animation="150" :force-fallback="true" @end="saveKids">
+            <div v-for="ch in kidList" :key="ch.id" class="row child" :class="{ muted: ch.hidden }">
+              <button class="icon-tap" @click="edit = { ...ch }"><CatIcon :icon="ch.icon" :color="ch.color" :size="34" /></button>
+              <button class="grow plain left" @click="edit = { ...ch }">{{ ch.name }} <span v-if="ch.hidden" class="badge">隱藏</span></button>
+              <span class="handle" aria-label="拖曳排序">≡</span>
+            </div>
+          </VueDraggable>
           <button class="row child" @click="openNew(c)"><span class="emoji">＋</span><span class="grow" style="color: var(--accent)">新增子分類</span></button>
         </template>
-      </template>
-    </div>
-    <p class="help" style="margin-top: 10px">點圖示編輯，點名稱展開子分類。刪除已使用的分類會改為隱藏，舊交易不受影響。</p>
+      </div>
+    </VueDraggable>
+    <p class="help" style="margin-top: 10px">點圖示編輯，點名稱展開子分類，按住右邊的 ≡ 拖曳排序。要換大類，在編輯畫面改「所屬大類」。刪除已使用的分類會改為隱藏，舊交易不受影響。</p>
 
     <Sheet v-if="edit" :title="isNew ? (edit.parentId ? '新增子分類' : '新增分類') : '編輯分類'" @close="edit = null">
       <div class="list">
@@ -106,10 +121,20 @@ async function move(list: Category[], i: number, d: -1 | 1) {
           <button class="icon-tap" @click="showIcons = true"><CatIcon :icon="edit.icon" :color="edit.color" :size="44" /></button>
           <input v-model="edit.name" placeholder="名稱" maxlength="12" />
         </div>
+        <div class="field">
+          <label>所屬大類</label>
+          <select v-model="edit.parentId">
+            <option :value="undefined">（無，當作大類）</option>
+            <option v-for="p in parentOptions" :key="p.id" :value="p.id">{{ p.name }}</option>
+          </select>
+        </div>
         <div v-if="!edit.parentId" class="field">
           <label>顏色</label>
           <div class="color-dots">
             <button v-for="col in COLORS" :key="col" :class="{ on: edit.color === col }" :style="{ background: col }" :aria-label="col" @click="edit.color = col" />
+            <label class="custom" :class="{ on: isCustomColor }" :style="isCustomColor ? { background: edit.color } : undefined" aria-label="自訂顏色">
+              <input v-model="edit.color" type="color" />
+            </label>
           </div>
         </div>
       </div>
@@ -129,8 +154,13 @@ async function move(list: Category[], i: number, d: -1 | 1) {
 .left { text-align: left; }
 .emoji.plain { background: var(--surface-2); }
 .child { padding-left: 34px; }
-.mini { border: 0; background: var(--surface-2); width: 30px; height: 30px; border-radius: 8px; color: var(--muted); }
-.mini:disabled { opacity: 0.3; }
+.grp > .row + div { border-top: 1px solid var(--border); }
+.grp + .grp { border-top: 1px solid var(--border); }
+.handle { flex: none; width: 34px; height: 34px; display: grid; place-items: center; color: var(--muted); font-size: 1.25rem; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+.sortable-ghost { opacity: 0.4; }
+.custom { position: relative; width: 26px; height: 26px; border-radius: 50%; border: 2px solid transparent; background: conic-gradient(#e8786b, #e6b450, #7fb59a, #85a8c9, #c39bd3, #e8786b); }
+.custom.on { border-color: var(--text); }
+.custom input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; padding: 0; border: 0; cursor: pointer; }
 .icon-pick { border: 0; flex: none; font-size: 1.25rem; }
 .sheet-actions { display: flex; gap: 8px; margin-top: 8px; }
 .sheet-actions .btn { flex: 1; }

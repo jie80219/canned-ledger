@@ -138,6 +138,13 @@ export interface FxRate {
   fetchedAt: number
 }
 
+/** 使用者上傳的圖示，128×128 WebP 的 data URL */
+export interface Asset {
+  id: string
+  data: string
+  updatedAt: number
+}
+
 export interface Meta {
   key: string
   value: unknown

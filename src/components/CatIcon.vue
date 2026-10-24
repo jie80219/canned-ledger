@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { iconSvg, parseIcon } from '../icons'
+import { assetUrl } from '../icons/assets'
 
 const props = withDefaults(defineProps<{ icon?: string; color?: string; size?: number; tint?: boolean }>(), {
   color: '#999',
@@ -16,7 +17,7 @@ const style = computed(() => {
     width: `${props.size / 16}rem`,
     height: `${props.size / 16}rem`,
     color: props.color,
-    background: k === 'txt' ? props.color : k === 'chr' || !props.tint ? 'transparent' : props.color + '26',
+    background: k === 'txt' ? props.color : k === 'chr' || k === 'img' || !props.tint ? 'transparent' : props.color + '26',
   }
 })
 const txtSize = computed(() => {
@@ -28,6 +29,7 @@ const txtSize = computed(() => {
 <template>
   <span class="cat-icon" :class="parsed.kind" :style="style">
     <span v-if="svg" class="svg" v-html="svg" />
+    <img v-else-if="parsed.kind === 'img'" class="img" :src="assetUrl(parsed.value)" alt="" />
     <span v-else-if="parsed.kind === 'txt'" class="txt" :style="{ fontSize: txtSize }">{{ parsed.value }}</span>
     <span v-else class="em" :style="{ fontSize: `${(size * 0.55) / 16}rem` }">{{ parsed.value || '📦' }}</span>
   </span>
@@ -38,5 +40,6 @@ const txtSize = computed(() => {
 .svg { display: flex; width: 60%; height: 60%; }
 .chr .svg { width: 100%; height: 100%; }
 .svg :deep(svg) { width: 100%; height: 100%; }
+img.img { width: 100%; height: 100%; object-fit: cover; }
 .txt { color: #fff; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; }
 </style>
