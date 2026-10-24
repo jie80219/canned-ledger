@@ -64,3 +64,17 @@ describe('卡片摘要', () => {
     expect(s).toMatchObject({ debt: 4200, billedUnpaid: 3000, unbilled: 1200, available: 5800, nextDue: '2026-03-20' })
   })
 })
+
+describe('期初餘額視為未出帳', () => {
+  // 結帳日 7 號、繳款日 22 號，10/25 設定：額度 20000、未出帳 10024
+  const c = credit({ statementDay: 7, dueDay: 22, creditLimit: 20000, openingDate: '2026-10-25' })
+  it('設定當下全部算未出帳，可用 = 額度 − 未出帳', () => {
+    const s = cardSummary('card', -10024, c, [], '2026-10-25')
+    expect([s.billedUnpaid, s.unbilled, s.available]).toEqual([0, 10024, 9976])
+  })
+  it('下次結帳後才變成待繳', () => {
+    const s = cardSummary('card', -10024, c, [spend('2026-11-03', 500)], '2026-11-10')
+    expect([s.billedUnpaid, s.unbilled]).toEqual([10524, 0])
+    expect(computeDue('card', -10024, c, [], cycleContaining(c, '2026-10-01')).due).toBe(0)
+  })
+})

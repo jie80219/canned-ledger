@@ -74,7 +74,8 @@ export function computeDue(
   txs: Transaction[],
   cyc: Cycle,
 ): DueInfo {
-  const statement = Math.max(0, -balanceOf(cardId, initialBalance, txs, cyc.end))
+  const opening = c.openingDate && cyc.end < c.openingDate ? 0 : initialBalance
+  const statement = Math.max(0, -balanceOf(cardId, opening, txs, cyc.end))
   let paidAfter = 0
   for (const tx of txs) {
     if (tx.date <= cyc.end || tx.date > cyc.due) continue

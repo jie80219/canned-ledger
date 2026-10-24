@@ -56,7 +56,7 @@ const a = ref<Account>({
 const isNew = ref(!props.id)
 const initial = ref('0')
 // 信用卡／負債用正數輸入欠款，iPhone 數字鍵盤沒有負號
-const owe = ref(true)
+let loadedInitial: number | undefined
 const isDebt = computed(() => a.value.type === 'credit' || a.value.type === 'liability')
 const limit = ref('0')
 const feePct = ref('1.5')
@@ -72,7 +72,7 @@ onMounted(async () => {
     a.value.currency = (await db.books.get(ui.bookId))?.currency ?? 'TWD'
     a.value.sortOrder = await db.accounts.where('bookId').equals(ui.bookId).count()
   }
-  owe.value = a.value.initialBalance <= 0
+  loadedInitial = a.value.initialBalance
   initial.value = String(toMajor(isDebt.value ? Math.abs(a.value.initialBalance) : a.value.initialBalance, a.value.currency))
   if (a.value.credit) {
     limit.value = String(toMajor(a.value.credit.creditLimit, a.value.currency))
@@ -110,7 +110,7 @@ const preview = computed(() => (a.value.credit ? cycleContaining(a.value.credit,
 
 function openingBalance() {
   const v = toMinor(Number(initial.value) || 0, a.value.currency)
-  return isDebt.value ? (owe.value ? -1 : 1) * Math.abs(v) : v
+  return isDebt.value ? -Math.abs(v) : v
 }
 
 async function save() {
@@ -123,6 +123,7 @@ async function save() {
       foreignFeeRate: (Number(feePct.value) || 0) / 100,
       minimumRate: (Number(minPct.value) || 0) / 100,
     }
+    if (!acc.credit.openingDate || acc.initialBalance !== loadedInitial) acc.credit.openingDate = today()
     if (acc.credit.autopay !== 'off' && !acc.credit.payFromAccountId) return ui.notify('開啟自動扣款需要選擇扣款帳戶')
   } else delete acc.credit
   await saveAccount(acc)
@@ -179,11 +180,7 @@ async function unarchive() {
         </select>
       </div>
       <div class="field">
-        <label>{{ isDebt ? '期初餘額' : '初始餘額' }}</label>
-        <div v-if="isDebt" class="seg owe">
-          <button :class="{ on: owe }" @click="owe = true">欠款</button>
-          <button :class="{ on: !owe }" @click="owe = false">溢繳</button>
-        </div>
+        <label>{{ a.type === 'credit' ? '未出帳金額' : isDebt ? '目前欠款' : '初始餘額' }}</label>
         <input v-model="initial" inputmode="decimal" />
         <span class="hint">{{ a.currency }}</span>
       </div>
@@ -192,7 +189,7 @@ async function unarchive() {
         <input v-model="a.includeInNetWorth" type="checkbox" class="switch" />
       </div>
     </div>
-    <p v-if="isDebt" class="help">選「欠款」後直接輸入正數，例如目前欠 3,000 就填 3000，會存成負債。</p>
+    <p v-if="isDebt" class="help">{{ a.type === 'credit' ? '填目前還沒出帳的消費，已經繳清的帳單不用算。可用額度 = 信用額度 − 未出帳金額。' : '直接輸入正數，例如欠 3,000 就填 3000。' }}</p>
 
     <template v-if="a.type === 'credit' && a.credit">
       <div class="section-label">帳單設定</div>
@@ -279,7 +276,6 @@ async function unarchive() {
 </template>
 
 <style scoped>
-.owe { flex: none; }
 .types { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
 .type { border: 2px solid transparent; background: var(--surface); border-radius: 14px; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 0.8125rem; }
 .type span { font-size: 1.375rem; }
