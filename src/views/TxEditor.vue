@@ -337,11 +337,13 @@ const title = computed(() => (existing.value ? '編輯' : '記一筆'))
 .value { flex: 1; text-align: right; font-size: 2.125rem; font-weight: 700; overflow-x: auto; white-space: nowrap; }
 .value.transfer { color: var(--text); }
 .fx { margin: 0 6px 10px; }
-.recent { align-items: center; margin: 4px 0 10px; }
+.recent { align-items: center; margin: 4px 0 10px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+.recent > * { flex: none; }
 .cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px 4px; margin-bottom: 10px; }
 .cat { border: 0; background: transparent; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 0.75rem; padding: 2px 0; }
 .cat .cat-icon { transition: transform 0.1s; }
 .cat.on .cat-icon { transform: scale(1.06); box-shadow: 0 0 0 2px currentColor; }
+.chip { white-space: nowrap; }
 .chip .cat-icon { vertical-align: -0.3em; border-radius: 6px; }
 .cat.on { font-weight: 600; }
 .subs { margin-bottom: 12px; }
