@@ -1,9 +1,9 @@
 import { db, uid, type LedgerDB } from './schema'
 import type { Account, Book, Category, CategoryKind } from './types'
 
-type CatSeed = [name: string, icon: string, children?: Array<[string, string]>]
+export type CatSeed = [name: string, icon: string, children?: Array<[string, string]>]
 
-const EXPENSE: CatSeed[] = [
+export const EXPENSE: CatSeed[] = [
   ['餐飲', '🍜', [['早餐', '🥐'], ['午餐', '🍱'], ['晚餐', '🍲'], ['飲料', '🧋'], ['零食', '🍪']]],
   ['交通', '🚇', [['捷運', '🚇'], ['公車', '🚌'], ['計程車', '🚕'], ['加油', '⛽'], ['停車', '🅿️']]],
   ['購物', '🛍️', [['日用品', '🧻'], ['服飾', '👕'], ['3C', '📱']]],
@@ -17,7 +17,7 @@ const EXPENSE: CatSeed[] = [
   ['保險', '🛡️'],
   ['其他', '📦'],
 ]
-const INCOME: CatSeed[] = [
+export const INCOME: CatSeed[] = [
   ['薪水', '💰'],
   ['獎金', '🧧'],
   ['投資', '📈'],
@@ -26,7 +26,7 @@ const INCOME: CatSeed[] = [
   ['其他', '📦'],
 ]
 
-const PALETTE = ['#e8a87c', '#85a8c9', '#c39bd3', '#7fb59a', '#e6b450', '#d98c9f', '#8fb4a8', '#b8a07e', '#9aa6d6', '#c9a27e']
+export const PALETTE = ['#e8a87c', '#85a8c9', '#c39bd3', '#7fb59a', '#e6b450', '#d98c9f', '#8fb4a8', '#b8a07e', '#9aa6d6', '#c9a27e']
 
 export function buildCategories(bookId: string): Category[] {
   const out: Category[] = []

@@ -38,7 +38,7 @@ function title(t: Transaction) {
 function icon(t: Transaction) {
   if (t.kind === 'transfer') return t.autopayOf ? '💳' : '🔁'
   if (t.kind === 'adjust') return '⚖️'
-  return props.categories.get(t.categoryId ?? '')?.icon ?? '🥫'
+  return props.categories.get(t.categoryId ?? '')?.icon ?? '📦'
 }
 
 function dayExpense(list: Transaction[]) {

@@ -20,7 +20,7 @@ const rows = computed(() =>
 )
 function icon(r: Recurring) {
   if (r.template.kind === 'transfer') return '🔁'
-  return categoryMap.value.get(r.template.categoryId ?? '')?.icon ?? '🥫'
+  return categoryMap.value.get(r.template.categoryId ?? '')?.icon ?? '📦'
 }
 </script>
 

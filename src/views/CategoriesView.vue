@@ -30,7 +30,7 @@ function openNew(parent?: Category) {
     kind: kind.value,
     parentId: parent?.id,
     name: '',
-    icon: parent?.icon ?? '🥫',
+    icon: parent?.icon ?? '📦',
     color: parent?.color ?? COLORS[tops.value.length % COLORS.length],
     sortOrder: siblings.length,
     updatedAt: 0,

@@ -77,6 +77,7 @@ const version = __APP_VERSION__
       <RouterLink to="/budget" class="row"><span class="emoji">🎯</span><span class="grow">預算</span><span class="chev">›</span></RouterLink>
       <RouterLink to="/recurring" class="row"><span class="emoji">🗓️</span><span class="grow">週期記帳</span><span class="chev">›</span></RouterLink>
       <RouterLink to="/settings/rules" class="row"><span class="emoji">🏷️</span><span class="grow">店家自動分類</span><span class="chev">›</span></RouterLink>
+      <RouterLink to="/settings/icons" class="row"><span class="emoji">🎨</span><span class="grow">圖示預覽</span><span class="chev">›</span></RouterLink>
       <div v-if="cards.length" class="field">
         <label>信用卡顯示</label>
         <div class="seg" style="flex: 1">
