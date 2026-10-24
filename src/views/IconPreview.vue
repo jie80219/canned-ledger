@@ -77,7 +77,7 @@ function reset() { marks.value = {} }
     <TopBar title="圖示預覽" back />
 
     <section class="card intro">
-      <p>每個分類有 3 款自繪圖示，大類另外多一款「囤囤角色風」。點圖示切換：<b class="like-t">✓ 喜歡</b> → <b class="nope-t">✗ 不要</b> → 不標。全部挑完按「複製結果」貼回來給我。</p>
+      <p>每個分類有 5 款自繪圖示，大類另外多一款「囤囤角色風」。點圖示切換：<b class="like-t">✓ 喜歡</b> → <b class="nope-t">✗ 不要</b> → 不標。全部挑完按「複製結果」貼回來給我。</p>
       <div class="toggles">
         <label><input v-model="dark" type="checkbox" /> 深色背景</label>
         <label><input v-model="mono" type="checkbox" /> 單色</label>
@@ -119,7 +119,7 @@ function reset() { marks.value = {} }
 .cat-row { padding: 10px 4px; border-bottom: 1px solid var(--border); }
 .cat-name { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
 .parent { font-size: 0.75rem; color: var(--muted); }
-.tiles { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 .tile { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 2px 6px; border-radius: 14px; border: 2px solid transparent; background: var(--surface); font: inherit; color: inherit; cursor: pointer; }
 .tile span { font-size: 0.6875rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .tile.ref { background: transparent; cursor: default; }

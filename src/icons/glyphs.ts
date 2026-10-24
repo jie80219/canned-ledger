@@ -1,13 +1,15 @@
 // 自繪分類圖示：24×24、圓角筆畫，顏色跟著 currentColor。
 // {f} = 淡色填滿，{F} = 實心填滿，渲染前由 glyphSvg() 展開。
 
+import { CATEGORY_GLYPHS_EXTRA, GLYPHS_EXTRA } from './glyphs-extra'
+
 export interface Glyph {
   name: string
   tags: string[]
   body: string
 }
 
-export const GLYPHS: Record<string, Glyph> = {
+const BASE_GLYPHS: Record<string, Glyph> = {
   // 餐飲
   'meal-bowl': { name: '碗筷', tags: ['餐飲', '吃飯', '麵'], body: '<path d="M3 11h18a9 9 0 0 1-18 0Z"{f}/><path d="M14 3l-3 8M19 4l-6 7"/>' },
   'meal-cutlery': { name: '刀叉', tags: ['餐飲', '西餐', '餐廳'], body: '<path d="M7 3v18M5 3v5a2 2 0 0 0 4 0V3"/><path d="M17 21V3c-2 1.5-3 4-3 7v3h3"{f}/>' },
@@ -174,8 +176,10 @@ export const GLYPHS: Record<string, Glyph> = {
   'refund-cycle': { name: '回流', tags: ['退款', '回饋'], body: '<path d="M4 12a8 8 0 1 0 2.3-5.7"/><path d="M4 4v4h4"/><circle cx="12" cy="12" r="3.5"{f}/>' },
 }
 
-/** 預設分類 → 推薦的三個自繪圖示 */
-export const CATEGORY_GLYPHS: Record<string, [string, string, string]> = {
+export const GLYPHS: Record<string, Glyph> = { ...BASE_GLYPHS, ...GLYPHS_EXTRA }
+
+/** 預設分類 → 前三款自繪圖示 */
+const BASE_CATEGORY_GLYPHS: Record<string, [string, string, string]> = {
   餐飲: ['meal-bowl', 'meal-cutlery', 'meal-cloche'],
   早餐: ['bf-toast', 'bf-egg', 'bf-mug'],
   午餐: ['lunch-bento', 'lunch-onigiri', 'lunch-burger'],
@@ -218,6 +222,11 @@ export const CATEGORY_GLYPHS: Record<string, [string, string, string]> = {
   兼職: ['job-briefcase', 'job-clock', 'job-wrench'],
   退款: ['refund-arrow', 'refund-receipt', 'refund-cycle'],
 }
+
+/** 預設分類 → 推薦的五個自繪圖示 */
+export const CATEGORY_GLYPHS: Record<string, string[]> = Object.fromEntries(
+  Object.entries(BASE_CATEGORY_GLYPHS).map(([k, ids]) => [k, [...ids, ...(CATEGORY_GLYPHS_EXTRA[k] ?? [])]]),
+)
 
 const FILL_SOFT = ' fill="currentColor" fill-opacity=".22"'
 const FILL_SOLID = ' fill="currentColor" stroke="none"'
