@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
+import { readFileSync } from 'node:fs'
 import pkg from './package.json'
 
 // 相對路徑 + hash router：不論 repo 名稱為何都能直接部署到 GitHub Pages
@@ -9,6 +10,12 @@ export default defineConfig({
   define: { __APP_VERSION__: JSON.stringify(pkg.version) },
   plugins: [
     vue(),
+    // iOS 加入主畫面時抓不到外部圖示檔（實測只有內嵌的 data URI 有效）
+    {
+      name: 'inline-touch-icon',
+      transformIndexHtml: (html) =>
+        html.replace(/href="\.\/apple-touch-icon\.png[^"]*"/, `href="data:image/png;base64,${readFileSync('public/apple-touch-icon.png').toString('base64')}"`),
+    },
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['icon.svg', 'apple-touch-icon.png'],
