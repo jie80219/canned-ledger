@@ -55,6 +55,9 @@ const a = ref<Account>({
 })
 const isNew = ref(!props.id)
 const initial = ref('0')
+// 信用卡／負債用正數輸入欠款，iPhone 數字鍵盤沒有負號
+const owe = ref(true)
+const isDebt = computed(() => a.value.type === 'credit' || a.value.type === 'liability')
 const limit = ref('0')
 const feePct = ref('1.5')
 const minPct = ref('10')
@@ -69,7 +72,8 @@ onMounted(async () => {
     a.value.currency = (await db.books.get(ui.bookId))?.currency ?? 'TWD'
     a.value.sortOrder = await db.accounts.where('bookId').equals(ui.bookId).count()
   }
-  initial.value = String(toMajor(a.value.initialBalance, a.value.currency))
+  owe.value = a.value.initialBalance <= 0
+  initial.value = String(toMajor(isDebt.value ? Math.abs(a.value.initialBalance) : a.value.initialBalance, a.value.currency))
   if (a.value.credit) {
     limit.value = String(toMajor(a.value.credit.creditLimit, a.value.currency))
     feePct.value = String(+(a.value.credit.foreignFeeRate * 100).toFixed(2))
@@ -104,9 +108,14 @@ const payAccounts = computed(() =>
 // 預覽：下一期的結帳日與繳款日
 const preview = computed(() => (a.value.credit ? cycleContaining(a.value.credit, today()) : null))
 
+function openingBalance() {
+  const v = toMinor(Number(initial.value) || 0, a.value.currency)
+  return isDebt.value ? (owe.value ? -1 : 1) * Math.abs(v) : v
+}
+
 async function save() {
   if (!a.value.name.trim()) return ui.notify('請輸入帳戶名稱')
-  const acc: Account = { ...plain(a.value), name: a.value.name.trim(), initialBalance: toMinor(Number(initial.value) || 0, a.value.currency) }
+  const acc: Account = { ...plain(a.value), name: a.value.name.trim(), initialBalance: openingBalance() }
   if (acc.type === 'credit' && acc.credit) {
     acc.credit = {
       ...acc.credit,
@@ -170,7 +179,11 @@ async function unarchive() {
         </select>
       </div>
       <div class="field">
-        <label>{{ a.type === 'credit' || a.type === 'liability' ? '期初餘額' : '初始餘額' }}</label>
+        <label>{{ isDebt ? '期初餘額' : '初始餘額' }}</label>
+        <div v-if="isDebt" class="seg owe">
+          <button :class="{ on: owe }" @click="owe = true">欠款</button>
+          <button :class="{ on: !owe }" @click="owe = false">溢繳</button>
+        </div>
         <input v-model="initial" inputmode="decimal" />
         <span class="hint">{{ a.currency }}</span>
       </div>
@@ -179,7 +192,7 @@ async function unarchive() {
         <input v-model="a.includeInNetWorth" type="checkbox" class="switch" />
       </div>
     </div>
-    <p v-if="a.type === 'credit' || a.type === 'liability'" class="help">欠款請輸入負數，例如目前欠 3,000 就填 -3000。</p>
+    <p v-if="isDebt" class="help">選「欠款」後直接輸入正數，例如目前欠 3,000 就填 3000，會存成負債。</p>
 
     <template v-if="a.type === 'credit' && a.credit">
       <div class="section-label">帳單設定</div>
@@ -266,6 +279,7 @@ async function unarchive() {
 </template>
 
 <style scoped>
+.owe { flex: none; }
 .types { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
 .type { border: 2px solid transparent; background: var(--surface); border-radius: 14px; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 0.8125rem; }
 .type span { font-size: 1.375rem; }
