@@ -12,6 +12,8 @@ import { today } from '../domain/dates'
 import { CURRENCIES, toMajor, toMinor } from '../domain/money'
 import TopBar from '../components/TopBar.vue'
 import IconPicker from '../components/IconPicker.vue'
+import CatIcon from '../components/CatIcon.vue'
+import { iconText } from '../icons'
 
 const props = defineProps<{ id?: string }>()
 const ui = useUi()
@@ -131,7 +133,7 @@ async function unarchive() {
 
     <div class="list">
       <div class="field">
-        <button class="emoji icon-pick" :style="{ background: a.color + '30' }" @click="showIcons = true">{{ a.icon }}</button>
+        <button class="icon-tap" @click="showIcons = true"><CatIcon :icon="a.icon" :color="a.color" :size="44" /></button>
         <input v-model="a.name" placeholder="帳戶名稱，例如：國泰世華" maxlength="30" />
       </div>
       <div class="field">
@@ -212,7 +214,7 @@ async function unarchive() {
             <label>扣款帳戶</label>
             <select v-model="a.credit.payFromAccountId">
               <option :value="undefined" disabled>選擇銀行帳戶</option>
-              <option v-for="p in payAccounts" :key="p.id" :value="p.id">{{ p.icon }} {{ p.name }}</option>
+              <option v-for="p in payAccounts" :key="p.id" :value="p.id">{{ iconText(p.icon) }} {{ p.name }}</option>
             </select>
           </div>
           <div v-if="a.credit.autopay === 'minimum'" class="field">
@@ -238,7 +240,7 @@ async function unarchive() {
       <p class="help" style="text-align: center; margin-top: 4px">有交易紀錄的帳戶會改為封存，資料不會遺失。</p>
     </template>
 
-    <IconPicker v-if="showIcons" v-model="a.icon" @close="showIcons = false" />
+    <IconPicker v-if="showIcons" v-model="a.icon" :color="a.color" @close="showIcons = false" />
   </main>
 </template>
 

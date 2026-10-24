@@ -12,6 +12,8 @@ import { diffDays, today } from '../domain/dates'
 import { formatMoney, toMajor, toMinor } from '../domain/money'
 import TopBar from '../components/TopBar.vue'
 import Sheet from '../components/Sheet.vue'
+import CatIcon from '../components/CatIcon.vue'
+import { iconText } from '../icons'
 
 const ui = useUi()
 const { bookId, book, accounts, categories, currency, categoryMap } = useBook()
@@ -117,7 +119,7 @@ const lbl = (d: string) => d.slice(5).replace('-', '/')
     <div class="section-label">分類預算</div>
     <div class="list">
       <button v-for="{ b, c, spent } in catBudgets" :key="b.id" class="row cat-row" @click="open(b)">
-        <span class="emoji" :style="{ background: c.color + '26' }">{{ c.icon }}</span>
+        <CatIcon :icon="c.icon" :color="c.color" :size="38" />
         <span class="grow">
           <span class="top"><span>{{ c.name }}</span><span class="num small" :class="{ expense: spent > b.amount }">{{ formatMoney(spent, currency) }} / {{ formatMoney(b.amount, currency) }}</span></span>
           <span class="progress" :class="level(pct(spent, b.amount))"><i :style="{ width: Math.min(100, pct(spent, b.amount)) + '%' }" /></span>
@@ -133,7 +135,7 @@ const lbl = (d: string) => d.slice(5).replace('-', '/')
         <div v-if="editing.categoryId === 'pick'" class="field">
           <label>分類</label>
           <select v-model="pickCat">
-            <option v-for="c in freeCats" :key="c.id" :value="c.id">{{ c.icon }} {{ c.name }}</option>
+            <option v-for="c in freeCats" :key="c.id" :value="c.id">{{ iconText(c.icon) }} {{ c.name }}</option>
           </select>
         </div>
         <div class="field"><label>每期金額</label><input v-model="amountInput" inputmode="decimal" placeholder="0" /><span class="hint">{{ currency }}</span></div>

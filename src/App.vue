@@ -2,7 +2,7 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { db, migrateLegacyDb } from './db/schema'
-import { ensureSeed } from './db/seed'
+import { ensureSeed, upgradeCategoryIcons } from './db/seed'
 import { runScheduler } from './domain/scheduler'
 import { hasPin } from './domain/lock'
 import { applyFontScale, applyTheme, useUi } from './stores/ui'
@@ -37,6 +37,7 @@ onMounted(async () => {
   applyFontScale(ui.fontScale)
   await migrateLegacyDb()
   const firstId = await ensureSeed()
+  await upgradeCategoryIcons()
   if (!ui.bookId || !(await db.books.get(ui.bookId))) ui.setBook(firstId)
   ui.locked = await hasPin()
   ready.value = true

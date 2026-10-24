@@ -8,6 +8,7 @@ import { useUi } from '../stores/ui'
 import { describeFreq, nextDate } from '../domain/recurrence'
 import { formatMoney } from '../domain/money'
 import TopBar from '../components/TopBar.vue'
+import CatIcon from '../components/CatIcon.vue'
 
 const ui = useUi()
 const { bookId, accountMap, categoryMap } = useBook()
@@ -33,7 +34,7 @@ function icon(r: Recurring) {
 
     <div v-if="rows.length" class="list">
       <RouterLink v-for="{ r, next } in rows" :key="r.id" :to="`/recurring/${r.id}`" class="row" :class="{ muted: !next }">
-        <span class="emoji">{{ icon(r) }}</span>
+        <CatIcon :icon="icon(r)" :color="categoryMap.get(r.template.categoryId ?? '')?.color" :size="38" />
         <span class="grow">
           <div>{{ r.name }} <span v-if="r.currency !== accountMap.get(r.template.accountId)?.currency" class="badge">{{ r.currency }}</span></div>
           <div class="sub">

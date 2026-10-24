@@ -8,6 +8,7 @@ import { saveAccount } from '../db/repo'
 import { plain } from '../db/factory'
 import { diffDays, today } from '../domain/dates'
 import Sheet from '../components/Sheet.vue'
+import { iconText } from '../icons'
 
 const ui = useUi()
 const { book, accounts } = useBook()
@@ -70,7 +71,7 @@ const version = __APP_VERSION__
       <span class="chev">›</span>
     </RouterLink>
 
-    <div class="section-label">帳本 · {{ book?.icon }} {{ book?.name }}</div>
+    <div class="section-label">帳本 · {{ iconText(book?.icon) }} {{ book?.name }}</div>
     <div class="list">
       <RouterLink to="/settings/books" class="row"><span class="emoji">📒</span><span class="grow">帳本管理</span><span class="chev">›</span></RouterLink>
       <RouterLink to="/settings/categories" class="row"><span class="emoji">🗂️</span><span class="grow">分類管理</span><span class="chev">›</span></RouterLink>

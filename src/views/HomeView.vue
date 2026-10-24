@@ -13,6 +13,7 @@ import { totals } from '../domain/stats'
 import { budgetPeriod } from '../domain/budget'
 import TxList from '../components/TxList.vue'
 import Sheet from '../components/Sheet.vue'
+import CatIcon from '../components/CatIcon.vue'
 
 const ui = useUi()
 const router = useRouter()
@@ -81,7 +82,7 @@ function pickBook(id: string) {
   <main class="page">
     <header class="topbar">
       <button class="book-btn" @click="showBooks = true">
-        <span>{{ book?.icon }}</span> {{ book?.name }} <span class="muted small">▾</span>
+        <CatIcon :icon="book?.icon" :color="book?.color" :size="26" :tint="false" /> {{ book?.name }} <span class="muted small">▾</span>
       </button>
       <span style="flex: 1" />
       <RouterLink to="/search" class="icon-btn" aria-label="搜尋">🔍</RouterLink>
@@ -137,7 +138,7 @@ function pickBook(id: string) {
     <Sheet v-if="showBooks" title="切換帳本" @close="showBooks = false">
       <div class="list">
         <button v-for="b in books" :key="b.id" class="row" @click="pickBook(b.id)">
-          <span class="emoji">{{ b.icon }}</span>
+          <CatIcon :icon="b.icon" :color="b.color" :size="38" />
           <span class="grow">{{ b.name }} <span class="sub">{{ b.currency }}</span></span>
           <span v-if="b.id === bookId">✓</span>
         </button>

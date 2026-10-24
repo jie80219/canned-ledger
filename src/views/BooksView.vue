@@ -10,6 +10,7 @@ import { CURRENCIES } from '../domain/money'
 import TopBar from '../components/TopBar.vue'
 import Sheet from '../components/Sheet.vue'
 import IconPicker from '../components/IconPicker.vue'
+import CatIcon from '../components/CatIcon.vue'
 
 const ui = useUi()
 const books = useLive<Book[]>(() => db.books.orderBy('sortOrder').toArray(), [])
@@ -56,7 +57,7 @@ async function remove() {
     <p class="help">每個帳本有自己的幣別、帳戶、分類與預算，適合把旅行、家庭、代墊分開記。</p>
     <div class="list">
       <div v-for="b in books" :key="b.id" class="row">
-        <button class="emoji plain" @click="openEdit(b)">{{ b.icon }}</button>
+        <button class="icon-tap" @click="openEdit(b)"><CatIcon :icon="b.icon" :color="b.color" :size="38" /></button>
         <button class="grow plain left" @click="ui.setBook(b.id); ui.notify(`切換到「${b.name}」`)">
           {{ b.name }}<div class="sub">{{ b.currency }}</div>
         </button>
@@ -68,7 +69,7 @@ async function remove() {
     <Sheet v-if="edit" :title="isNew ? '新增帳本' : '編輯帳本'" @close="edit = null">
       <div class="list">
         <div class="field">
-          <button class="emoji icon-pick" @click="showIcons = true">{{ edit.icon }}</button>
+          <button class="icon-tap" @click="showIcons = true"><CatIcon :icon="edit.icon" :color="edit.color ?? '#7a9a6b'" :size="44" /></button>
           <input v-model="edit.name" placeholder="例如：東京旅行" maxlength="20" />
         </div>
         <div class="field">

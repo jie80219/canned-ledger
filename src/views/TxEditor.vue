@@ -14,6 +14,8 @@ import { getRate, type RateResult } from '../domain/fx'
 import Keypad from '../components/Keypad.vue'
 import Sheet from '../components/Sheet.vue'
 import TopBar from '../components/TopBar.vue'
+import CatIcon from '../components/CatIcon.vue'
+import { iconText } from '../icons'
 
 const props = defineProps<{ id?: string }>()
 const ui = useUi()
@@ -255,18 +257,18 @@ const title = computed(() => (existing.value ? '編輯' : '記一筆'))
       <div v-if="recentCats.length && !existing" class="chips recent">
         <span class="small muted">最近</span>
         <button v-for="id in recentCats.filter((i) => categoryMap.get(i)?.kind === kind && !categoryMap.get(i)?.hidden)" :key="id" class="chip" :class="{ on: categoryId === id }" @click="categoryId = id; parentId = categoryMap.get(id)?.parentId ?? id">
-          {{ categoryMap.get(id)?.icon }} {{ categoryMap.get(id)?.name }}
+          <CatIcon :icon="categoryMap.get(id)?.icon" :color="categoryMap.get(id)?.color" :size="24" /> {{ categoryMap.get(id)?.name }}
         </button>
       </div>
       <div class="cat-grid">
         <button v-for="c in topCats" :key="c.id" class="cat" :class="{ on: parentId === c.id }" @click="pickTop(c.id)">
-          <span class="emoji" :style="{ background: parentId === c.id ? c.color : c.color + '26' }">{{ c.icon }}</span>
+          <CatIcon :icon="c.icon" :color="c.color" :size="46" />
           <span>{{ c.name }}</span>
         </button>
       </div>
       <div v-if="subCats.length" class="chips subs">
         <button v-for="c in subCats" :key="c.id" class="chip" :class="{ on: categoryId === c.id }" @click="categoryId = categoryId === c.id ? parentId : c.id">
-          {{ c.icon }} {{ c.name }}
+          <CatIcon :icon="c.icon" :color="c.color" :size="24" /> {{ c.name }}
         </button>
       </div>
     </template>
@@ -275,14 +277,14 @@ const title = computed(() => (existing.value ? '編輯' : '記一筆'))
       <div class="field">
         <label>{{ kind === 'transfer' ? '轉出帳戶' : '帳戶' }}</label>
         <select v-model="accountId">
-          <option v-for="a in activeAccounts" :key="a.id" :value="a.id">{{ a.icon }} {{ a.name }}（{{ a.currency }}）</option>
+          <option v-for="a in activeAccounts" :key="a.id" :value="a.id">{{ iconText(a.icon) }} {{ a.name }}（{{ a.currency }}）</option>
         </select>
       </div>
       <div v-if="kind === 'transfer'" class="field">
         <label>轉入帳戶</label>
         <select v-model="toAccountId">
           <option value="" disabled>選擇帳戶</option>
-          <option v-for="a in activeAccounts.filter((a) => a.id !== accountId)" :key="a.id" :value="a.id">{{ a.icon }} {{ a.name }}（{{ a.currency }}）</option>
+          <option v-for="a in activeAccounts.filter((a) => a.id !== accountId)" :key="a.id" :value="a.id">{{ iconText(a.icon) }} {{ a.name }}（{{ a.currency }}）</option>
         </select>
       </div>
       <div v-if="crossTransfer" class="field">
@@ -338,8 +340,9 @@ const title = computed(() => (existing.value ? '編輯' : '記一筆'))
 .recent { align-items: center; margin: 4px 0 10px; }
 .cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px 4px; margin-bottom: 10px; }
 .cat { border: 0; background: transparent; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 0.75rem; padding: 2px 0; }
-.cat .emoji { width: 46px; height: 46px; border-radius: 16px; font-size: 1.375rem; transition: transform 0.1s; }
-.cat.on .emoji { transform: scale(1.06); }
+.cat .cat-icon { transition: transform 0.1s; }
+.cat.on .cat-icon { transform: scale(1.06); box-shadow: 0 0 0 2px currentColor; }
+.chip .cat-icon { vertical-align: -0.3em; border-radius: 6px; }
 .cat.on { font-weight: 600; }
 .subs { margin-bottom: 12px; }
 .actions { display: flex; justify-content: flex-end; margin-bottom: 8px; }

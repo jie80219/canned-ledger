@@ -271,3 +271,4 @@ button.row:active, a.row:active { background: var(--surface-2); }
 .small { font-size: 0.75rem; }
 .muted { color: var(--muted); }
 .grow { flex: 1; min-width: 0; }
+.icon-tap { border: 0; background: transparent; padding: 0; display: inline-flex; flex: none; cursor: pointer; }

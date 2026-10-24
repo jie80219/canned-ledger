@@ -10,6 +10,7 @@ import { confirmTx } from '../db/repo'
 import { toMinor } from '../domain/money'
 import TopBar from '../components/TopBar.vue'
 import TxList from '../components/TxList.vue'
+import { iconText } from '../icons'
 
 const ui = useUi()
 const route = useRoute()
@@ -83,12 +84,12 @@ async function confirmAll() {
         <label>分類</label>
         <select v-model="categoryId">
           <option value="">全部</option>
-          <option v-for="c in catOptions" :key="c.id" :value="c.id">{{ c.icon }} {{ c.parentId ? '　' : '' }}{{ c.name }}</option>
+          <option v-for="c in catOptions" :key="c.id" :value="c.id">{{ iconText(c.icon) }} {{ c.parentId ? '　' : '' }}{{ c.name }}</option>
         </select>
       </div>
       <div class="field">
         <label>帳戶</label>
-        <select v-model="accountId"><option value="">全部</option><option v-for="a in accounts" :key="a.id" :value="a.id">{{ a.icon }} {{ a.name }}</option></select>
+        <select v-model="accountId"><option value="">全部</option><option v-for="a in accounts" :key="a.id" :value="a.id">{{ iconText(a.icon) }} {{ a.name }}</option></select>
       </div>
       <div class="field">
         <label>狀態</label>

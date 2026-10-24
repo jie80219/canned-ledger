@@ -4,6 +4,7 @@ import type { MerchantRule } from '../db/types'
 import { useBook } from '../composables/useBook'
 import { getRules, setRules } from '../io/rules'
 import TopBar from '../components/TopBar.vue'
+import { iconText } from '../icons'
 
 const { bookId, categories, categoryMap } = useBook()
 const rules = ref<MerchantRule[]>([])
@@ -20,7 +21,7 @@ const label = (id: string) => {
   const c = categoryMap.value.get(id)
   if (!c) return '（分類已刪除）'
   const p = c.parentId ? categoryMap.value.get(c.parentId) : undefined
-  return `${c.icon} ${p ? p.name + ' › ' : ''}${c.name}`
+  return `${iconText(c.icon)} ${p ? p.name + ' › ' : ''}${c.name}`
 }
 async function persist(next: MerchantRule[]) {
   rules.value = next

@@ -11,6 +11,7 @@ import { evaluate } from '../domain/calc'
 import TopBar from '../components/TopBar.vue'
 import TxList from '../components/TxList.vue'
 import Sheet from '../components/Sheet.vue'
+import CatIcon from '../components/CatIcon.vue'
 
 const props = defineProps<{ id: string }>()
 const ui = useUi()
@@ -86,7 +87,7 @@ const lbl = (d: string) => d.slice(5).replace('-', '/')
     </TopBar>
 
     <section class="card head">
-      <span class="emoji big-emoji" :style="{ background: account.color + '30' }">{{ account.icon }}</span>
+      <CatIcon :icon="account.icon" :color="account.color" :size="48" />
       <div>
         <div class="small muted">{{ account.credit ? '目前欠款' : '目前餘額' }}</div>
         <div class="bal num" :class="{ expense: balance < 0 }">

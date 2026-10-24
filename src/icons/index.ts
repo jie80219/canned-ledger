@@ -20,3 +20,17 @@ export function parseIcon(icon: string | undefined): { kind: IconKind; value: st
 export function iconSvg(id: string): string {
   return id in CHARACTERS ? characterSvg(id) : glyphSvg(id)
 }
+
+/** 純文字場合（<option>、圖表標籤）用：emoji 原樣回傳，其他圖示沒辦法放進文字就回空字串 */
+export function iconText(icon: string | undefined): string {
+  const p = parseIcon(icon)
+  return p.kind === 'emoji' ? p.value : ''
+}
+
+/** 依名稱推薦：該分類的自繪圖示 + 角色版 */
+export function recommendIcons(name: string): string[] {
+  const ids = [...(CATEGORY_GLYPHS[name] ?? [])]
+  const chr = CATEGORY_CHARACTER[name]
+  if (chr) ids.push(chr)
+  return ids.map((id) => `svg:${id}`)
+}

@@ -11,6 +11,8 @@ import { formatMoney, toMajor, toMinor } from '../domain/money'
 import { byCategory, totals, trend } from '../domain/stats'
 import EChart from '../components/EChart.vue'
 import TxList from '../components/TxList.vue'
+import CatIcon from '../components/CatIcon.vue'
+import { iconText } from '../icons'
 
 type Period = 'week' | 'month' | 'year' | 'custom'
 const ui = useUi()
@@ -83,7 +85,7 @@ const pieOption = computed(() => ({
       itemStyle: { borderRadius: 6, borderColor: css('--surface'), borderWidth: 2 },
       label: { show: false },
       data: slices.value.map((s) => ({
-        name: `${s.category?.icon ?? '📦'} ${s.category?.name ?? '未分類'}`,
+        name: `${iconText(s.category?.icon)} ${s.category?.name ?? '未分類'}`.trim(),
         value: s.amount,
         id: s.id,
         itemStyle: { color: s.category?.color ?? '#aaa' },
@@ -180,7 +182,7 @@ function onSlice(id: string) {
         <EChart :option="pieOption" height="200px" @click="(p) => onSlice(p.data.id)" />
         <div class="rank">
           <button v-for="s in slices" :key="s.id" class="rank-row" @click="onSlice(s.id)">
-            <span class="emoji" :style="{ background: (s.category?.color ?? '#aaa') + '26' }">{{ s.category?.icon ?? '📦' }}</span>
+            <CatIcon :icon="s.category?.icon" :color="s.category?.color ?? '#aaa'" :size="38" />
             <span class="grow">
               <span class="rank-top">
                 <span>{{ s.category?.name ?? '未分類' }} <span class="muted small">{{ s.count }} 筆</span></span>
@@ -209,7 +211,7 @@ function onSlice(id: string) {
       <div v-if="topTxs.length" class="list">
         <RouterLink v-for="(t, i) in topTxs" :key="t.id" :to="`/tx/${t.id}`" class="row">
           <span class="no num">{{ i + 1 }}</span>
-          <span class="emoji">{{ categoryMap.get(t.categoryId ?? '')?.icon ?? '📦' }}</span>
+          <CatIcon :icon="categoryMap.get(t.categoryId ?? '')?.icon" :color="categoryMap.get(t.categoryId ?? '')?.color" :size="38" />
           <span class="grow">
             <div>{{ categoryMap.get(t.categoryId ?? '')?.name ?? '未分類' }}</div>
             <div class="sub">{{ t.date }}<template v-if="t.note"> · {{ t.note }}</template></div>

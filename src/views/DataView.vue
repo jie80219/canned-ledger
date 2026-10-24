@@ -13,6 +13,7 @@ import { addDays, diffDays, today } from '../domain/dates'
 import { formatMoney, toMinor } from '../domain/money'
 import TopBar from '../components/TopBar.vue'
 import Sheet from '../components/Sheet.vue'
+import { iconText } from '../icons'
 
 const ui = useUi()
 const { book, accounts, categories, categoryMap } = useBook()
@@ -82,7 +83,7 @@ const catLabel = (id: string) => {
   const c = categoryMap.value.get(id)
   if (!c) return '未分類'
   const p = c.parentId ? categoryMap.value.get(c.parentId) : undefined
-  return `${c.icon} ${p ? p.name + '›' : ''}${c.name}`
+  return `${iconText(c.icon)} ${p ? p.name + '›' : ''}${c.name}`
 }
 
 async function pickInvoice(e: Event) {
@@ -193,7 +194,7 @@ async function doInvoiceImport() {
         <div class="field">
           <label>記到帳戶</label>
           <select v-model="invAccount">
-            <option v-for="a in accounts.filter((a) => !a.archived)" :key="a.id" :value="a.id">{{ a.icon }} {{ a.name }}</option>
+            <option v-for="a in accounts.filter((a) => !a.archived)" :key="a.id" :value="a.id">{{ iconText(a.icon) }} {{ a.name }}</option>
           </select>
         </div>
         <div class="field">

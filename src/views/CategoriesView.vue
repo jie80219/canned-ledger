@@ -8,6 +8,7 @@ import { useUi } from '../stores/ui'
 import TopBar from '../components/TopBar.vue'
 import Sheet from '../components/Sheet.vue'
 import IconPicker from '../components/IconPicker.vue'
+import CatIcon from '../components/CatIcon.vue'
 
 const ui = useUi()
 const { categories } = useBook()
@@ -78,7 +79,7 @@ async function move(list: Category[], i: number, d: -1 | 1) {
     <div class="list">
       <template v-for="(c, i) in tops" :key="c.id">
         <div class="row" :class="{ muted: c.hidden }">
-          <button class="emoji plain" :style="{ background: c.color + '30' }" @click="edit = { ...c }">{{ c.icon }}</button>
+          <button class="icon-tap" @click="edit = { ...c }"><CatIcon :icon="c.icon" :color="c.color" :size="38" /></button>
           <button class="grow plain left" @click="expanded = expanded === c.id ? undefined : c.id">
             {{ c.name }} <span v-if="c.hidden" class="badge">隱藏</span>
             <div class="sub">{{ childrenOf(c.id).length }} 個子分類 {{ expanded === c.id ? '▴' : '▾' }}</div>
@@ -88,7 +89,7 @@ async function move(list: Category[], i: number, d: -1 | 1) {
         </div>
         <template v-if="expanded === c.id">
           <div v-for="(ch, j) in childrenOf(c.id)" :key="ch.id" class="row child" :class="{ muted: ch.hidden }">
-            <button class="emoji plain" @click="edit = { ...ch }">{{ ch.icon }}</button>
+            <button class="icon-tap" @click="edit = { ...ch }"><CatIcon :icon="ch.icon" :color="ch.color" :size="34" /></button>
             <button class="grow plain left" @click="edit = { ...ch }">{{ ch.name }} <span v-if="ch.hidden" class="badge">隱藏</span></button>
             <button class="mini" aria-label="上移" :disabled="j === 0" @click="move(childrenOf(c.id), j, -1)">↑</button>
             <button class="mini" aria-label="下移" :disabled="j === childrenOf(c.id).length - 1" @click="move(childrenOf(c.id), j, 1)">↓</button>
@@ -102,7 +103,7 @@ async function move(list: Category[], i: number, d: -1 | 1) {
     <Sheet v-if="edit" :title="isNew ? (edit.parentId ? '新增子分類' : '新增分類') : '編輯分類'" @close="edit = null">
       <div class="list">
         <div class="field">
-          <button class="emoji icon-pick" :style="{ background: edit.color + '30' }" @click="showIcons = true">{{ edit.icon }}</button>
+          <button class="icon-tap" @click="showIcons = true"><CatIcon :icon="edit.icon" :color="edit.color" :size="44" /></button>
           <input v-model="edit.name" placeholder="名稱" maxlength="12" />
         </div>
         <div v-if="!edit.parentId" class="field">
@@ -118,7 +119,7 @@ async function move(list: Category[], i: number, d: -1 | 1) {
         <button class="btn danger" @click="remove">刪除</button>
       </div>
     </Sheet>
-    <IconPicker v-if="showIcons && edit" v-model="edit.icon" @close="showIcons = false" />
+    <IconPicker v-if="showIcons && edit" v-model="edit.icon" :name="edit.name" :color="edit.color" @close="showIcons = false" />
   </main>
 </template>
 

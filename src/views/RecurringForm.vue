@@ -12,6 +12,7 @@ import { occurrenceDate } from '../domain/recurrence'
 import { today } from '../domain/dates'
 import { CURRENCIES, toMajor, toMinor } from '../domain/money'
 import TopBar from '../components/TopBar.vue'
+import { iconText } from '../icons'
 
 const props = defineProps<{ id?: string }>()
 const ui = useUi()
@@ -59,7 +60,7 @@ const cats = computed(() =>
 const catLabel = (id: string) => {
   const c = categoryMap.value.get(id)!
   const p = c.parentId ? categoryMap.value.get(c.parentId) : undefined
-  return `${c.icon} ${p ? p.name + ' › ' : ''}${c.name}`
+  return `${iconText(c.icon)} ${p ? p.name + ' › ' : ''}${c.name}`
 }
 // 依大類→子類排序
 const catOptions = computed(() => {
@@ -152,14 +153,14 @@ const FREQS: Array<[Freq, string]> = [
       <div class="field">
         <label>{{ r.template.kind === 'transfer' ? '轉出帳戶' : '帳戶' }}</label>
         <select v-model="r.template.accountId">
-          <option v-for="a in accounts.filter((a) => !a.archived)" :key="a.id" :value="a.id">{{ a.icon }} {{ a.name }}（{{ a.currency }}）</option>
+          <option v-for="a in accounts.filter((a) => !a.archived)" :key="a.id" :value="a.id">{{ iconText(a.icon) }} {{ a.name }}（{{ a.currency }}）</option>
         </select>
       </div>
       <div v-if="r.template.kind === 'transfer'" class="field">
         <label>轉入帳戶</label>
         <select v-model="r.template.toAccountId">
           <option :value="undefined" disabled>選擇帳戶</option>
-          <option v-for="a in accounts.filter((a) => !a.archived && a.id !== r.template.accountId && a.currency === account?.currency)" :key="a.id" :value="a.id">{{ a.icon }} {{ a.name }}</option>
+          <option v-for="a in accounts.filter((a) => !a.archived && a.id !== r.template.accountId && a.currency === account?.currency)" :key="a.id" :value="a.id">{{ iconText(a.icon) }} {{ a.name }}</option>
         </select>
       </div>
       <div v-else class="field">

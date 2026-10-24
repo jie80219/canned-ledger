@@ -1,4 +1,5 @@
-import { db, uid, type LedgerDB } from './schema'
+import { CATEGORY_GLYPHS } from '../icons'
+import { db, getMeta, setMeta, uid, type LedgerDB } from './schema'
 import type { Account, Book, Category, CategoryKind } from './types'
 
 export type CatSeed = [name: string, icon: string, children?: Array<[string, string]>]
@@ -28,6 +29,33 @@ export const INCOME: CatSeed[] = [
 
 export const PALETTE = ['#e8a87c', '#85a8c9', '#c39bd3', '#7fb59a', '#e6b450', '#d98c9f', '#8fb4a8', '#b8a07e', '#9aa6d6', '#c9a27e']
 
+/** 預設分類用第一款自繪圖示，沒有對應時沿用 emoji */
+export function defaultIcon(name: string, emoji: string): string {
+  const ids = CATEGORY_GLYPHS[name]
+  return ids ? `svg:${ids[0]}` : emoji
+}
+
+/** 把還是預設 emoji 的分類換成自繪圖示；使用者改過的不動。只跑一次。 */
+export async function upgradeCategoryIcons(d: LedgerDB = db): Promise<number> {
+  if (await getMeta('iconsUpgraded', false, d)) return 0
+  const seedEmoji = new Map<string, string>()
+  for (const [name, icon, children] of [...EXPENSE, ...INCOME]) {
+    seedEmoji.set(name, icon)
+    children?.forEach(([cn, ci]) => seedEmoji.set(cn, ci))
+  }
+  let n = 0
+  await d.transaction('rw', d.categories, d.meta, async () => {
+    const cats = await d.categories.toArray()
+    const changed = cats
+      .filter((c) => seedEmoji.get(c.name) === c.icon && CATEGORY_GLYPHS[c.name])
+      .map((c) => ({ ...c, icon: defaultIcon(c.name, c.icon), updatedAt: Date.now() }))
+    await d.categories.bulkPut(changed)
+    n = changed.length
+    await setMeta('iconsUpgraded', true, d)
+  })
+  return n
+}
+
 export function buildCategories(bookId: string): Category[] {
   const out: Category[] = []
   const now = Date.now()
@@ -35,9 +63,9 @@ export function buildCategories(bookId: string): Category[] {
     seeds.forEach(([name, icon, children], i) => {
       const id = uid()
       const color = PALETTE[i % PALETTE.length]
-      out.push({ id, bookId, kind, name, icon, color, sortOrder: i, updatedAt: now })
+      out.push({ id, bookId, kind, name, icon: defaultIcon(name, icon), color, sortOrder: i, updatedAt: now })
       children?.forEach(([cn, ci], j) =>
-        out.push({ id: uid(), bookId, kind, parentId: id, name: cn, icon: ci, color, sortOrder: j, updatedAt: now }),
+        out.push({ id: uid(), bookId, kind, parentId: id, name: cn, icon: defaultIcon(cn, ci), color, sortOrder: j, updatedAt: now }),
       )
     })
   add('expense', EXPENSE)

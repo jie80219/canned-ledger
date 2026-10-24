@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import type { Account, Category, Transaction } from '../db/types'
 import { labelDay } from '../domain/dates'
 import { formatMoney } from '../domain/money'
+import CatIcon from './CatIcon.vue'
 
 const props = defineProps<{
   txs: Transaction[]
@@ -56,7 +57,7 @@ function dayExpense(list: Transaction[]) {
     </div>
     <div class="list">
       <RouterLink v-for="t in list" :key="t.id" :to="`/tx/${t.id}`" class="row">
-        <span class="emoji" :style="{ background: (categories.get(t.categoryId ?? '')?.color ?? '#999') + '26' }">{{ icon(t) }}</span>
+        <CatIcon :icon="icon(t)" :color="categories.get(t.categoryId ?? '')?.color" :size="38" />
         <span class="grow">
           <div>
             {{ title(t) }}

@@ -6,6 +6,7 @@ import { useConverter } from '../composables/useRates'
 import { cardSummary } from '../domain/creditCard'
 import { today } from '../domain/dates'
 import { convert, formatMoney } from '../domain/money'
+import CatIcon from '../components/CatIcon.vue'
 
 const { accounts, currency, allTxs, balanceMap } = useBalances()
 const { rates } = useConverter(accounts, currency)
@@ -71,7 +72,7 @@ const summaries = computed(() => {
         <div class="section-label">{{ g.label }}</div>
         <div class="list">
           <RouterLink v-for="a in visible.filter((a) => a.type === g.type)" :key="a.id" :to="`/accounts/${a.id}`" class="row">
-            <span class="emoji" :style="{ background: a.color + '30' }">{{ a.icon }}</span>
+            <CatIcon :icon="a.icon" :color="a.color" :size="38" />
             <span class="grow">
               <div>{{ a.name }} <span v-if="a.currency !== currency" class="badge">{{ a.currency }}</span></div>
               <div v-if="summaries.get(a.id)" class="sub">
@@ -95,7 +96,7 @@ const summaries = computed(() => {
       <div class="section-label">已封存</div>
       <div class="list">
         <RouterLink v-for="a in archived" :key="a.id" :to="`/accounts/${a.id}`" class="row muted">
-          <span class="emoji">{{ a.icon }}</span><span class="grow">{{ a.name }}</span>
+          <CatIcon :icon="a.icon" :color="a.color" :size="38" /><span class="grow">{{ a.name }}</span>
           <span class="num">{{ formatMoney(balanceMap.get(a.id) ?? 0, a.currency) }}</span>
         </RouterLink>
       </div>
