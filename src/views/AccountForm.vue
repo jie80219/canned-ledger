@@ -13,7 +13,7 @@ import { CURRENCIES, toMajor, toMinor } from '../domain/money'
 import TopBar from '../components/TopBar.vue'
 import IconPicker from '../components/IconPicker.vue'
 import CatIcon from '../components/CatIcon.vue'
-import { iconText } from '../icons'
+import { BANKS, iconText } from '../icons'
 
 const props = defineProps<{ id?: string }>()
 const ui = useUi()
@@ -84,6 +84,20 @@ function setType(t: AccountType, icon: string) {
   if (t === 'credit' && !a.value.credit) a.value.credit = defaultCredit()
 }
 
+// 選銀行時套用該行圖示與品牌色；「其他」則恢復帳戶類型的預設圖示
+const bank = computed({
+  get: () => (a.value.icon.startsWith('svg:bank-') ? a.value.icon.slice(4) : ''),
+  set: (id: string) => {
+    if (!id) {
+      if (bank.value) a.value.icon = TYPES.find(([t]) => t === a.value.type)![2]
+      return
+    }
+    a.value.icon = `svg:${id}`
+    a.value.color = BANKS[id].color
+    if (!a.value.name.trim()) a.value.name = BANKS[id].name
+  },
+})
+
 const payAccounts = computed(() =>
   accounts.value.filter((x) => x.id !== a.value.id && !x.archived && x.type !== 'credit' && x.currency === a.value.currency),
 )
@@ -132,6 +146,13 @@ async function unarchive() {
     </div>
 
     <div class="list">
+      <div v-if="a.type !== 'cash'" class="field">
+        <label>銀行</label>
+        <select v-model="bank">
+          <option v-for="(b, id) in BANKS" :key="id" :value="id">{{ b.name }}</option>
+          <option value="">其他</option>
+        </select>
+      </div>
       <div class="field">
         <button class="icon-tap" @click="showIcons = true"><CatIcon :icon="a.icon" :color="a.color" :size="44" /></button>
         <input v-model="a.name" placeholder="帳戶名稱，例如：國泰世華" maxlength="30" />

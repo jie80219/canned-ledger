@@ -1,7 +1,8 @@
 import { glyphSvg, GLYPHS, CATEGORY_GLYPHS } from './glyphs'
 import { characterSvg, CHARACTERS, CATEGORY_CHARACTER } from './characters'
+import { bankSvg, BANKS } from './banks'
 
-export { GLYPHS, CATEGORY_GLYPHS, CHARACTERS, CATEGORY_CHARACTER }
+export { GLYPHS, CATEGORY_GLYPHS, CHARACTERS, CATEGORY_CHARACTER, BANKS }
 
 export type IconKind = 'emoji' | 'svg' | 'chr' | 'img' | 'txt'
 
@@ -10,7 +11,7 @@ export function parseIcon(icon: string | undefined): { kind: IconKind; value: st
   const s = icon ?? ''
   if (s.startsWith('svg:')) {
     const id = s.slice(4)
-    return { kind: id in CHARACTERS ? 'chr' : 'svg', value: id }
+    return { kind: id in CHARACTERS || id in BANKS ? 'chr' : 'svg', value: id }
   }
   if (s.startsWith('img:')) return { kind: 'img', value: s.slice(4) }
   if (s.startsWith('txt:')) return { kind: 'txt', value: s.slice(4) }
@@ -18,7 +19,7 @@ export function parseIcon(icon: string | undefined): { kind: IconKind; value: st
 }
 
 export function iconSvg(id: string): string {
-  return id in CHARACTERS ? characterSvg(id) : glyphSvg(id)
+  return id in CHARACTERS ? characterSvg(id) : id in BANKS ? bankSvg(id) : glyphSvg(id)
 }
 
 /** 純文字場合（<option>、圖表標籤）用：emoji 原樣回傳，其他圖示沒辦法放進文字就回空字串 */
