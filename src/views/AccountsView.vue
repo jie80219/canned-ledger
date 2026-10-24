@@ -96,15 +96,17 @@ const summaries = computed(() => {
                 下次繳款 {{ summaries.get(a.id)!.nextDue.slice(5).replace('-', '/') }} ·
                 <template v-if="a.credit?.display === 'available'">未出帳 {{ formatMoney(-summaries.get(a.id)!.unbilled, a.currency) }}</template>
                 <template v-else>可用 {{ formatMoney(summaries.get(a.id)!.available, a.currency) }}</template>
-                <template v-if="summaries.get(a.id)!.billedUnpaid"> · 待繳 {{ formatMoney(summaries.get(a.id)!.billedUnpaid, a.currency) }}</template>
                 <template v-if="a.credit?.autopay !== 'off'"> · 自動扣款</template>
               </div>
             </span>
-            <span v-if="a.credit?.display === 'available' && summaries.get(a.id)" class="num" :class="{ expense: summaries.get(a.id)!.available < 0 }">
-              <span class="small muted">可用</span> {{ formatMoney(summaries.get(a.id)!.available, a.currency) }}
-            </span>
-            <span v-else-if="summaries.get(a.id)" class="num" :class="{ expense: summaries.get(a.id)!.unbilled > 0 }">
-              <span class="small muted">未出帳</span> {{ formatMoney(-summaries.get(a.id)!.unbilled, a.currency) }}
+            <span v-if="summaries.get(a.id)" class="card-amt num">
+              <span v-if="a.credit?.display === 'available'" :class="{ expense: summaries.get(a.id)!.available < 0 }">
+                <span class="small muted">可用</span> {{ formatMoney(summaries.get(a.id)!.available, a.currency) }}
+              </span>
+              <span v-else :class="{ expense: summaries.get(a.id)!.unbilled > 0 }">
+                <span class="small muted">未出帳</span> {{ formatMoney(-summaries.get(a.id)!.unbilled, a.currency) }}
+              </span>
+              <span v-if="summaries.get(a.id)!.billedUnpaid" class="small expense">待繳 {{ formatMoney(summaries.get(a.id)!.billedUnpaid, a.currency) }}</span>
             </span>
             <span v-else class="num" :class="{ expense: (balanceMap.get(a.id) ?? 0) < 0 }">{{ formatMoney(balanceMap.get(a.id) ?? 0, a.currency) }}</span>
             <span class="chev">›</span>
@@ -130,5 +132,6 @@ const summaries = computed(() => {
 .handle { flex: none; width: 34px; height: 34px; display: grid; place-items: center; color: var(--muted); font-size: 1.25rem; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
 .sortable-ghost { opacity: 0.4; }
 .worth .big { font-size: 1.875rem; font-weight: 700; }
+.card-amt { display: flex; flex-direction: column; align-items: flex-end; white-space: nowrap; }
 .split { display: flex; gap: 18px; font-size: 0.8125rem; color: var(--muted); margin-top: 4px; }
 </style>
