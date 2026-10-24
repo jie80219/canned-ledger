@@ -228,12 +228,12 @@ function onSlice(id: string) {
 .totals { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .tot { border: 2px solid transparent; text-align: left; display: flex; flex-direction: column; gap: 2px; }
 .tot.on { border-color: var(--accent); }
-.tot b { font-size: 19px; }
+.tot b { font-size: 1.1875rem; }
 .rank { margin-top: 6px; }
 .rank-row { display: flex; align-items: center; gap: 10px; width: 100%; border: 0; background: transparent; padding: 8px 0; text-align: left; }
 .rank-row .grow { flex: 1; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
 .rank-top { display: flex; justify-content: space-between; gap: 8px; }
 .pct { width: 46px; text-align: right; }
 .no { width: 18px; color: var(--muted); text-align: center; }
-.link { border: 0; background: none; color: var(--accent); padding: 0; font-size: 13px; }
+.link { border: 0; background: none; color: var(--accent); padding: 0; font-size: 0.8125rem; }
 </style>

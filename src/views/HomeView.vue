@@ -151,10 +151,10 @@ function pickBook(id: string) {
 .book-btn { border: 0; background: var(--surface); border-radius: 99px; padding: 7px 14px; font-weight: 600; box-shadow: var(--shadow); }
 .summary { padding: 8px 18px 16px; }
 .month { display: flex; align-items: center; justify-content: center; gap: 4px; font-weight: 600; margin-bottom: 4px; }
-.big { font-size: 34px; font-weight: 700; letter-spacing: -0.5px; color: var(--expense); }
+.big { font-size: 2.125rem; font-weight: 700; letter-spacing: -0.5px; color: var(--expense); }
 .sub-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
 .sub-stats div { display: flex; flex-direction: column; }
-.sub-stats b { font-size: 15px; }
+.sub-stats b { font-size: 0.9375rem; }
 .budget { display: block; color: inherit; margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--border); }
 .budget-head { display: flex; justify-content: space-between; margin-bottom: 6px; }
 .shortcuts { margin: 4px 0 6px; }

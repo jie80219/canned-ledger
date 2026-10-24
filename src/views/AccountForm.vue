@@ -183,6 +183,13 @@ async function unarchive() {
           <span class="hint">{{ a.currency }}</span>
         </div>
         <div class="field">
+          <label>列表顯示</label>
+          <div class="seg" style="flex: 1">
+            <button :class="{ on: (a.credit.display ?? 'spent') === 'spent' }" @click="a.credit.display = 'spent'">已刷 −金額</button>
+            <button :class="{ on: a.credit.display === 'available' }" @click="a.credit.display = 'available'">可用額度</button>
+          </div>
+        </div>
+        <div class="field">
           <label>海外手續費</label>
           <input v-model="feePct" inputmode="decimal" />
           <span class="hint">%</span>
@@ -237,8 +244,8 @@ async function unarchive() {
 
 <style scoped>
 .types { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
-.type { border: 2px solid transparent; background: var(--surface); border-radius: 14px; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 13px; }
-.type span { font-size: 22px; }
+.type { border: 2px solid transparent; background: var(--surface); border-radius: 14px; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 0.8125rem; }
+.type span { font-size: 1.375rem; }
 .type.on { border-color: var(--accent); font-weight: 600; }
-.icon-pick { border: 0; flex: none; font-size: 20px; }
+.icon-pick { border: 0; flex: none; font-size: 1.25rem; }
 </style>

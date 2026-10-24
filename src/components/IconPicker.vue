@@ -20,6 +20,6 @@ function pick(i: string) {
 
 <style scoped>
 .icons { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
-.icons button { border: 0; background: transparent; font-size: 24px; aspect-ratio: 1; border-radius: 10px; }
+.icons button { border: 0; background: transparent; font-size: 1.5rem; aspect-ratio: 1; border-radius: 10px; }
 .icons button.on { background: var(--accent-soft); }
 </style>

@@ -40,14 +40,14 @@ const items = [
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--muted);
   width: 60px;
   filter: grayscale(1);
   opacity: 0.75;
 }
 .item.on { color: var(--text); filter: none; opacity: 1; font-weight: 600; }
-.ic { font-size: 21px; line-height: 1.2; }
+.ic { font-size: 1.3125rem; line-height: 1.2; }
 .add {
   width: 52px;
   height: 52px;
@@ -56,7 +56,7 @@ const items = [
   color: var(--on-accent);
   display: grid;
   place-items: center;
-  font-size: 28px;
+  font-size: 1.75rem;
   font-weight: 300;
   margin-top: -18px;
   box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 40%, transparent);

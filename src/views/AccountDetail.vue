@@ -155,12 +155,12 @@ const lbl = (d: string) => d.slice(5).replace('-', '/')
 
 <style scoped>
 .head { display: flex; align-items: center; gap: 14px; }
-.big-emoji { width: 52px; height: 52px; font-size: 26px; border-radius: 16px; }
-.bal { font-size: 28px; font-weight: 700; }
+.big-emoji { width: 52px; height: 52px; font-size: 1.625rem; border-radius: 16px; }
+.bal { font-size: 1.75rem; font-weight: 700; }
 .grid4 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .grid4 div { display: flex; flex-direction: column; }
 .btns { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
-.btns .btn { flex: 1; text-align: center; padding: 10px; font-size: 14px; white-space: nowrap; }
+.btns .btn { flex: 1; text-align: center; padding: 10px; font-size: 0.875rem; white-space: nowrap; }
 .nav-row { display: flex; align-items: center; justify-content: space-between; gap: 4px; margin: 8px 0; }
 .center { text-align: center; flex: 1; }
 .grow { flex: 1; }

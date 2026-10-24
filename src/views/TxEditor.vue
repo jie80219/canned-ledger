@@ -330,15 +330,15 @@ const title = computed(() => (existing.value ? '編輯' : '記一筆'))
 .editor { padding-bottom: calc(260px + var(--safe-b)); }
 .kinds { margin-bottom: 10px; }
 .amount { display: flex; align-items: center; gap: 10px; padding: 10px 14px; margin-bottom: 6px; }
-.cur-btn { border: 0; background: var(--surface-2); border-radius: 10px; padding: 6px 10px; font-weight: 600; font-size: 13px; }
+.cur-btn { border: 0; background: var(--surface-2); border-radius: 10px; padding: 6px 10px; font-weight: 600; font-size: 0.8125rem; }
 .cur-btn.static { color: var(--muted); }
-.value { flex: 1; text-align: right; font-size: 34px; font-weight: 700; overflow-x: auto; white-space: nowrap; }
+.value { flex: 1; text-align: right; font-size: 2.125rem; font-weight: 700; overflow-x: auto; white-space: nowrap; }
 .value.transfer { color: var(--text); }
 .fx { margin: 0 6px 10px; }
 .recent { align-items: center; margin: 4px 0 10px; }
 .cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px 4px; margin-bottom: 10px; }
-.cat { border: 0; background: transparent; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 12px; padding: 2px 0; }
-.cat .emoji { width: 46px; height: 46px; border-radius: 16px; font-size: 22px; transition: transform 0.1s; }
+.cat { border: 0; background: transparent; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 0.75rem; padding: 2px 0; }
+.cat .emoji { width: 46px; height: 46px; border-radius: 16px; font-size: 1.375rem; transition: transform 0.1s; }
 .cat.on .emoji { transform: scale(1.06); }
 .cat.on { font-weight: 600; }
 .subs { margin-bottom: 12px; }

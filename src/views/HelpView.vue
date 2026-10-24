@@ -54,7 +54,7 @@ import TopBar from '../components/TopBar.vue'
 </template>
 
 <style scoped>
-.help-page h3 { margin: 0 0 6px; font-size: 16px; }
-.help-page p, .help-page li { font-size: 14px; line-height: 1.65; margin: 6px 0; }
+.help-page h3 { margin: 0 0 6px; font-size: 1rem; }
+.help-page p, .help-page li { font-size: 0.875rem; line-height: 1.65; margin: 6px 0; }
 .help-page ul { padding-left: 20px; margin: 6px 0; }
 </style>

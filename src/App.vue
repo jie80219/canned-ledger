@@ -5,7 +5,7 @@ import { db, migrateLegacyDb } from './db/schema'
 import { ensureSeed } from './db/seed'
 import { runScheduler } from './domain/scheduler'
 import { hasPin } from './domain/lock'
-import { applyTheme, useUi } from './stores/ui'
+import { applyFontScale, applyTheme, useUi } from './stores/ui'
 import BottomNav from './components/BottomNav.vue'
 import LockScreen from './components/LockScreen.vue'
 
@@ -34,6 +34,7 @@ async function onVisible() {
 
 onMounted(async () => {
   applyTheme(ui.theme, ui.accent)
+  applyFontScale(ui.fontScale)
   await migrateLegacyDb()
   const firstId = await ensureSeed()
   if (!ui.bookId || !(await db.books.get(ui.bookId))) ui.setBook(firstId)

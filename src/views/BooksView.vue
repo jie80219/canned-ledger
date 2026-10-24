@@ -95,5 +95,5 @@ async function remove() {
 .left { text-align: left; }
 .emoji.plain { background: var(--surface-2); }
 .mini { border: 0; background: var(--surface-2); width: 30px; height: 30px; border-radius: 8px; color: var(--muted); }
-.icon-pick { border: 0; flex: none; font-size: 20px; }
+.icon-pick { border: 0; flex: none; font-size: 1.25rem; }
 </style>

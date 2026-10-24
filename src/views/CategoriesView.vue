@@ -130,7 +130,7 @@ async function move(list: Category[], i: number, d: -1 | 1) {
 .child { padding-left: 34px; }
 .mini { border: 0; background: var(--surface-2); width: 30px; height: 30px; border-radius: 8px; color: var(--muted); }
 .mini:disabled { opacity: 0.3; }
-.icon-pick { border: 0; flex: none; font-size: 20px; }
+.icon-pick { border: 0; flex: none; font-size: 1.25rem; }
 .sheet-actions { display: flex; gap: 8px; margin-top: 8px; }
 .sheet-actions .btn { flex: 1; }
 </style>

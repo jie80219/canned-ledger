@@ -113,8 +113,8 @@ async function confirmAll() {
 
 <style scoped>
 .search { display: flex; gap: 8px; margin-bottom: 10px; }
-.search input { flex: 1; border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; background: var(--surface); font-size: 16px; }
+.search input { flex: 1; border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; background: var(--surface); font-size: 1rem; }
 .icon-btn.on { background: var(--accent-soft); }
 .meta { display: flex; justify-content: space-between; margin: 10px 4px; }
-.link { border: 0; background: none; color: var(--accent); padding: 0 0 0 12px; font-size: 12px; }
+.link { border: 0; background: none; color: var(--accent); padding: 0 0 0 12px; font-size: 0.75rem; }
 </style>

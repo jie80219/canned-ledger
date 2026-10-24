@@ -3,6 +3,7 @@ import type { SchedulerResult } from '../domain/scheduler'
 
 export type ThemeMode = 'auto' | 'light' | 'dark'
 export type Accent = 'olive' | 'berry' | 'sky' | 'peach'
+export type FontScale = 0.9 | 1 | 1.15 | 1.3
 
 // 只是個人偏好，存 localStorage；讀寫失敗（無痕模式等）時退回預設值
 function load<T>(key: string, fallback: T): T {
@@ -26,6 +27,7 @@ export const useUi = defineStore('ui', {
     bookId: load('cl.bookId', ''),
     theme: load<ThemeMode>('cl.theme', 'auto'),
     accent: load<Accent>('cl.accent', 'olive'),
+    fontScale: load<FontScale>('cl.fontScale', 1),
     toast: '' as string,
     scheduler: null as SchedulerResult | null,
     locked: false,
@@ -45,6 +47,11 @@ export const useUi = defineStore('ui', {
       save('cl.accent', a)
       applyTheme(this.theme, this.accent)
     },
+    setFontScale(f: FontScale) {
+      this.fontScale = f
+      save('cl.fontScale', f)
+      applyFontScale(f)
+    },
     notify(msg: string) {
       this.toast = msg
       setTimeout(() => {
@@ -59,4 +66,8 @@ export function applyTheme(mode: ThemeMode, accent: Accent) {
   if (mode === 'auto') delete el.dataset.theme
   else el.dataset.theme = mode
   el.dataset.accent = accent
+}
+
+export function applyFontScale(f: FontScale) {
+  document.documentElement.style.setProperty('--font-scale', String(f))
 }

@@ -145,8 +145,8 @@ const lbl = (d: string) => d.slice(5).replace('-', '/')
 </template>
 
 <style scoped>
-.big { font-size: 26px; font-weight: 700; }
-.link { border: 0; background: none; color: var(--accent); padding: 0; font-size: 13px; }
+.big { font-size: 1.625rem; font-weight: 700; }
+.link { border: 0; background: none; color: var(--accent); padding: 0; font-size: 0.8125rem; }
 .cat-row .grow { display: flex; flex-direction: column; gap: 6px; }
 .top { display: flex; justify-content: space-between; gap: 8px; }
 </style>

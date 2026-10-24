@@ -236,7 +236,7 @@ label.row { cursor: pointer; }
 .inv-top { display: flex; justify-content: space-between; gap: 8px; }
 .ellipsis { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .inv-cat { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
-.inv-cat select { flex: 1; border: 1px solid var(--border); border-radius: 8px; padding: 4px 6px; background: var(--surface); font-size: 13px; }
-.link { border: 0; background: none; color: var(--accent); padding: 0; font-size: 12px; white-space: nowrap; }
-.sub { font-size: 12px; color: var(--muted); }
+.inv-cat select { flex: 1; border: 1px solid var(--border); border-radius: 8px; padding: 4px 6px; background: var(--surface); font-size: 0.8125rem; }
+.link { border: 0; background: none; color: var(--accent); padding: 0; font-size: 0.75rem; white-space: nowrap; }
+.sub { font-size: 0.75rem; color: var(--muted); }
 </style>

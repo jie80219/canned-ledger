@@ -38,11 +38,11 @@ async function press(k: string) {
 
 <style scoped>
 .lock { min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 16px; }
-.mascot { font-size: 56px; }
+.mascot { font-size: 3.5rem; }
 .dots { display: flex; gap: 12px; margin: 8px 0 24px; }
 .dots i { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--muted); }
 .dots i.on { background: var(--accent); border-color: var(--accent); }
 .pad { display: grid; grid-template-columns: repeat(3, 72px); gap: 14px; }
-.pad button { height: 72px; border-radius: 50%; border: 0; background: var(--surface); font-size: 26px; box-shadow: var(--shadow); }
+.pad button { height: 72px; border-radius: 50%; border: 0; background: var(--surface); font-size: 1.625rem; box-shadow: var(--shadow); }
 .pad button:disabled { visibility: hidden; }
 </style>

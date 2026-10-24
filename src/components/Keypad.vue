@@ -48,8 +48,8 @@ function onSubmit() {
 
 <style scoped>
 .keypad { display: grid; grid-template-columns: repeat(4, 1fr) 1.2fr; grid-template-rows: repeat(4, 54px); gap: 6px; }
-.keypad button { border: 0; border-radius: 14px; background: var(--surface); font-size: 22px; box-shadow: var(--shadow); }
+.keypad button { border: 0; border-radius: 14px; background: var(--surface); font-size: 1.375rem; box-shadow: var(--shadow); }
 .keypad button:active { background: var(--surface-2); }
 .keypad .op { color: var(--accent); background: var(--accent-soft); }
-.ok { grid-column: 5; grid-row: 1 / span 4; background: var(--accent) !important; color: var(--on-accent); font-size: 18px !important; font-weight: 600; }
+.ok { grid-column: 5; grid-row: 1 / span 4; background: var(--accent) !important; color: var(--on-accent); font-size: 1.125rem !important; font-weight: 600; }
 </style>

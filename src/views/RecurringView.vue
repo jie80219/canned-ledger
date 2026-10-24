@@ -47,7 +47,7 @@ function icon(r: Recurring) {
       </RouterLink>
     </div>
     <div v-else class="empty">
-      <div style="font-size: 40px">🗓️</div>
+      <div style="font-size: 2.5rem">🗓️</div>
       還沒有週期記帳<br />房租、薪水、Netflix 都可以交給它
       <div style="margin-top: 14px"><RouterLink to="/recurring/new" class="btn">新增週期記帳</RouterLink></div>
     </div>
