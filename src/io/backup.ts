@@ -1,6 +1,8 @@
 import { db as defaultDb, TABLES, type LedgerDB, type TableName } from '../db/schema'
 
-export const BACKUP_APP = 'canned-ledger'
+export const BACKUP_APP = 'tuntun-ledger'
+/** 改名前匯出的備份也要能還原 */
+const LEGACY_BACKUP_APPS = ['canned-ledger']
 export const SCHEMA_VERSION = 1
 
 export interface Backup {
@@ -20,7 +22,7 @@ export async function exportBackup(d: LedgerDB = defaultDb): Promise<Backup> {
 
 export function validateBackup(data: unknown): Backup {
   const b = data as Backup
-  if (!b || b.app !== BACKUP_APP || typeof b.tables !== 'object') throw new Error('不是罐頭記帳的備份檔')
+  if (!b || (b.app !== BACKUP_APP && !LEGACY_BACKUP_APPS.includes(b.app)) || typeof b.tables !== 'object') throw new Error('不是囤囤帳的備份檔')
   if (b.schemaVersion > SCHEMA_VERSION) throw new Error('備份檔版本比目前 App 新，請先更新 App')
   return b
 }

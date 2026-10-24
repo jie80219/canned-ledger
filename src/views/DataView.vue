@@ -24,7 +24,7 @@ const backupAge = computed(() => (lastBackup.value ? diffDays(lastBackup.value.s
 
 async function doExport() {
   const b = await exportBackup()
-  downloadFile(`canned-ledger-${today()}.json`, JSON.stringify(b), 'application/json')
+  downloadFile(`tuntun-ledger-${today()}.json`, JSON.stringify(b), 'application/json')
   // 存本地日期，避免 UTC 跨日誤差
   lastBackup.value = today()
   await setMeta('lastBackupAt', today())

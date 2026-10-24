@@ -15,7 +15,7 @@ const EXPENSE: CatSeed[] = [
   ['社交', '🎁', [['聚餐', '🍻'], ['禮物', '🎁']]],
   ['寵物', '🐶'],
   ['保險', '🛡️'],
-  ['其他', '🥫'],
+  ['其他', '📦'],
 ]
 const INCOME: CatSeed[] = [
   ['薪水', '💰'],
@@ -23,7 +23,7 @@ const INCOME: CatSeed[] = [
   ['投資', '📈'],
   ['兼職', '💼'],
   ['退款', '↩️'],
-  ['其他', '🥫'],
+  ['其他', '📦'],
 ]
 
 const PALETTE = ['#e8a87c', '#85a8c9', '#c39bd3', '#7fb59a', '#e6b450', '#d98c9f', '#8fb4a8', '#b8a07e', '#9aa6d6', '#c9a27e']
@@ -80,7 +80,7 @@ export async function createBook(p: Pick<Book, 'name' | 'currency' | 'icon'>, d:
 export async function ensureSeed(d: LedgerDB = db): Promise<string> {
   const first = await d.books.orderBy('sortOrder').first()
   if (first) return first.id
-  const book = await createBook({ name: '日常', currency: 'TWD', icon: '🥫' }, d)
+  const book = await createBook({ name: '日常', currency: 'TWD', icon: '🐹' }, d)
   const now = Date.now()
   const bankId = uid()
   await d.accounts.bulkAdd([
@@ -138,5 +138,5 @@ export const ICONS = [
   '🐶', '🐱', '🐟', '🦜',
   '🛡️', '🧾', '🏛️', '💸', '🏧',
   '💰', '💼', '📈', '📉', '🪙', '💵', '💳', '🏦', '👛', '📲', '↩️', '🎯',
-  '🥫', '⭐', '❤️', '🌱', '🌙', '☀️', '🍀', '🔖', '📦', '❓',
+  '🐹', '⭐', '❤️', '🌱', '🌙', '☀️', '🍀', '🔖', '📦', '❓',
 ]

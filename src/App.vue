@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { db } from './db/schema'
+import { db, migrateLegacyDb } from './db/schema'
 import { ensureSeed } from './db/seed'
 import { runScheduler } from './domain/scheduler'
 import { hasPin } from './domain/lock'
@@ -34,6 +34,7 @@ async function onVisible() {
 
 onMounted(async () => {
   applyTheme(ui.theme, ui.accent)
+  await migrateLegacyDb()
   const firstId = await ensureSeed()
   if (!ui.bookId || !(await db.books.get(ui.bookId))) ui.setBook(firstId)
   ui.locked = await hasPin()

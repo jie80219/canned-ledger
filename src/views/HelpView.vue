@@ -7,7 +7,7 @@ import TopBar from '../components/TopBar.vue'
     <TopBar title="使用說明" back />
 
     <section class="card">
-      <h3>🥫 資料存在哪？</h3>
+      <h3>🐹 資料存在哪？</h3>
       <p>所有資料都存在這個瀏覽器的 IndexedDB，不會上傳到任何伺服器。換來的代價是：<b>清除瀏覽器資料、刪掉主畫面 App 就會遺失</b>。請定期到「設定 → 資料」下載 JSON 備份。</p>
       <p>iPhone 請用 Safari「分享 → 加入主畫面」安裝。沒安裝的話，Safari 可能在 7 天沒開啟後清除網站資料。</p>
     </section>

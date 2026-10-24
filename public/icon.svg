@@ -1,11 +1,30 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" rx="112" fill="#7a9a6b"/>
-  <g transform="translate(256 270)">
-    <ellipse cx="0" cy="-108" rx="120" ry="34" fill="#e9e4d4"/>
-    <path d="M-120 -108 V108 A120 34 0 0 0 120 108 V-108 A120 34 0 0 1 -120 -108 Z" fill="#f6f4ee"/>
-    <path d="M-120 -40 H120 V60 H-120 Z" fill="#e6b450"/>
-    <ellipse cx="0" cy="-108" rx="120" ry="34" fill="none" stroke="#c9c2ab" stroke-width="10"/>
-    <ellipse cx="0" cy="-108" rx="84" ry="22" fill="none" stroke="#c9c2ab" stroke-width="8"/>
-    <text x="0" y="36" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="84" fill="#5b5446">$</text>
-  </g>
+  <!-- 耳朵 -->
+  <circle cx="150" cy="150" r="52" fill="#e8a65c"/>
+  <circle cx="150" cy="150" r="28" fill="#f4c7a1"/>
+  <circle cx="362" cy="150" r="52" fill="#e8a65c"/>
+  <circle cx="362" cy="150" r="28" fill="#f4c7a1"/>
+  <!-- 身體與塞滿的臉頰 -->
+  <ellipse cx="256" cy="290" rx="178" ry="160" fill="#e8a65c"/>
+  <ellipse cx="256" cy="330" rx="128" ry="112" fill="#fbeedd"/>
+  <circle cx="132" cy="300" r="70" fill="#fbeedd"/>
+  <circle cx="380" cy="300" r="70" fill="#fbeedd"/>
+  <!-- 眼睛 -->
+  <circle cx="196" cy="246" r="20" fill="#3d3328"/>
+  <circle cx="316" cy="246" r="20" fill="#3d3328"/>
+  <circle cx="202" cy="239" r="7" fill="#fff"/>
+  <circle cx="322" cy="239" r="7" fill="#fff"/>
+  <!-- 腮紅 -->
+  <ellipse cx="128" cy="300" rx="26" ry="16" fill="#f2a28f" opacity=".7"/>
+  <ellipse cx="384" cy="300" rx="26" ry="16" fill="#f2a28f" opacity=".7"/>
+  <!-- 鼻子與嘴 -->
+  <ellipse cx="256" cy="280" rx="14" ry="10" fill="#c9705a"/>
+  <path d="M256 290 v12 M256 302 q-16 14 -30 2 M256 302 q16 14 30 2" fill="none" stroke="#3d3328" stroke-width="7" stroke-linecap="round"/>
+  <!-- 抱著的金幣 -->
+  <circle cx="256" cy="392" r="62" fill="#f2c94c" stroke="#d9a91f" stroke-width="10"/>
+  <text x="256" y="420" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="78" fill="#a87a0a">$</text>
+  <!-- 小手 -->
+  <ellipse cx="200" cy="380" rx="26" ry="20" fill="#e8a65c"/>
+  <ellipse cx="312" cy="380" rx="26" ry="20" fill="#e8a65c"/>
 </svg>

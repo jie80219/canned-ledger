@@ -130,7 +130,7 @@ function pickBook(id: string) {
 
     <TxList v-if="monthTxs.length" :txs="monthTxs" :accounts="accountMap" :categories="categoryMap" show-day-total />
     <div v-else class="empty">
-      <div class="big">🥫</div>
+      <div class="big">🐹</div>
       這個月還沒有記帳<br />點下方 ＋ 記第一筆吧
     </div>
 

@@ -13,8 +13,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icon.svg', 'apple-touch-icon.png'],
       manifest: {
-        name: '罐頭記帳 Web',
-        short_name: '罐頭記帳',
+        name: '囤囤帳 TunTun',
+        short_name: '囤囤帳',
         description: '離線可用的極簡記帳，資料只存在你的裝置',
         lang: 'zh-Hant-TW',
         theme_color: '#7a9a6b',

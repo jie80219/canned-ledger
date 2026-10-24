@@ -102,7 +102,7 @@ const version = __APP_VERSION__
     <div class="list" style="margin-top: 18px">
       <RouterLink to="/help" class="row"><span class="emoji">❓</span><span class="grow">使用說明</span><span class="chev">›</span></RouterLink>
     </div>
-    <p class="help" style="text-align: center; margin-top: 16px">罐頭記帳 Web v{{ version }} · 資料只存在本機</p>
+    <p class="help" style="text-align: center; margin-top: 16px">囤囤帳 TunTun v{{ version }} · 資料只存在本機</p>
 
     <Sheet v-if="pinSheet" :title="pinSheet === 'set' ? '設定密碼' : '關閉密碼鎖'" @close="pinSheet = null">
       <div class="list">

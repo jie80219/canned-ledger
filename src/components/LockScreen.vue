@@ -23,7 +23,7 @@ async function press(k: string) {
 
 <template>
   <div class="lock">
-    <div class="mascot">🥫</div>
+    <div class="mascot">🐹</div>
     <p>{{ error ? '密碼錯誤，再試一次' : '輸入密碼' }}</p>
     <div class="dots">
       <i v-for="i in 6" :key="i" :class="{ on: i <= pin.length }" />
