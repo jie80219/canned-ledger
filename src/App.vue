@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { db, migrateLegacyDb } from './db/schema'
 import { ensureSeed, upgradeCategoryIcons } from './db/seed'
 import { runScheduler } from './domain/scheduler'
+import { checkProgress, getPet } from './db/progress'
 import { hasPin } from './domain/lock'
 import { applyFontScale, applyTheme, useUi } from './stores/ui'
 import BottomNav from './components/BottomNav.vue'
@@ -23,6 +24,14 @@ async function schedule() {
     if (res.created) ui.scheduler = res
   } catch (e) {
     console.error('[scheduler]', e)
+  }
+  try {
+    if (!(await getPet())) return
+    const p = await checkProgress()
+    if (p.goals.length) ui.notify(`達成存錢目標「${p.goals[0].name}」！`)
+    else if (p.achievements.length) ui.notify(`解鎖成就：${p.achievements.map((a) => a.name).join('、')}`)
+  } catch (e) {
+    console.error('[progress]', e)
   }
 }
 

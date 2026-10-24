@@ -1,6 +1,7 @@
 import { db, uid } from './schema'
 import { makeTx } from './factory'
-import type { Account, Book, Budget, Category, Recurring, Transaction } from './types'
+import type { Account, Book, Budget, Category, Goal, Recurring, Transaction } from './types'
+import { balanceOf } from '../domain/balance'
 
 const stamp = <T extends { updatedAt: number }>(o: T): T => ({ ...o, updatedAt: Date.now() })
 
@@ -48,8 +49,9 @@ export async function saveBook(b: Book) {
 }
 
 export async function deleteBook(id: string) {
-  await db.transaction('rw', [db.books, db.accounts, db.categories, db.transactions, db.recurring, db.budgets], async () => {
+  await db.transaction('rw', [db.books, db.accounts, db.categories, db.transactions, db.recurring, db.budgets, db.goals], async () => {
     await db.transactions.where('bookId').equals(id).delete()
+    await db.goals.where('bookId').equals(id).delete()
     await db.accounts.where('bookId').equals(id).delete()
     await db.categories.where('bookId').equals(id).delete()
     await db.recurring.where('bookId').equals(id).delete()
@@ -144,3 +146,17 @@ export async function saveBudget(b: Omit<Budget, 'id' | 'updatedAt'> & { id?: st
 }
 
 export const deleteBudget = (id: string) => db.budgets.delete(id)
+
+// ---- 存錢目標
+export async function saveGoal(g: Goal) {
+  await db.goals.put(stamp(g))
+}
+
+export const deleteGoal = (id: string) => db.goals.delete(id)
+
+export async function accountBalance(id: string) {
+  const a = await db.accounts.get(id)
+  if (!a) return 0
+  const txs = [...(await db.transactions.where('accountId').equals(id).toArray()), ...(await db.transactions.where('toAccountId').equals(id).toArray())]
+  return balanceOf(id, a.initialBalance, txs)
+}

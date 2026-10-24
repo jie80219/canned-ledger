@@ -23,6 +23,7 @@ export const router = createRouter({
     { path: '/settings/data', component: () => import('../views/DataView.vue') },
     { path: '/settings/rules', component: () => import('../views/RulesView.vue') },
     { path: '/settings/icons', component: () => import('../views/IconPreview.vue') },
+    { path: '/pet', component: () => import('../views/PetView.vue') },
     { path: '/help', component: () => import('../views/HelpView.vue') },
     { path: '/:pathMatch(.*)*', redirect: '/' },
   ],

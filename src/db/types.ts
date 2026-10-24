@@ -145,6 +145,24 @@ export interface Asset {
   updatedAt: number
 }
 
+export type GoalStyle = 'jar' | 'plant' | 'house'
+
+/** 存錢目標：進度 = 對應帳戶目前餘額 − baseline */
+export interface Goal {
+  id: string
+  bookId: string
+  name: string
+  target: number // 帳戶幣別最小單位
+  accountId: string
+  deadline?: DateStr
+  style: GoalStyle
+  baseline: number
+  createdAt: number
+  achievedAt?: DateStr
+  archived?: boolean
+  updatedAt: number
+}
+
 export interface Meta {
   key: string
   value: unknown

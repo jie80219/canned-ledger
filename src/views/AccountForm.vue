@@ -208,7 +208,7 @@ async function unarchive() {
         <div class="field">
           <label>列表顯示</label>
           <div class="seg" style="flex: 1">
-            <button :class="{ on: (a.credit.display ?? 'spent') === 'spent' }" @click="a.credit.display = 'spent'">已刷 −金額</button>
+            <button :class="{ on: (a.credit.display ?? 'spent') === 'spent' }" @click="a.credit.display = 'spent'">未出帳 −金額</button>
             <button :class="{ on: a.credit.display === 'available' }" @click="a.credit.display = 'available'">可用額度</button>
           </div>
         </div>

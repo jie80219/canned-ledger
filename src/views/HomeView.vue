@@ -14,6 +14,7 @@ import { budgetPeriod } from '../domain/budget'
 import TxList from '../components/TxList.vue'
 import Sheet from '../components/Sheet.vue'
 import CatIcon from '../components/CatIcon.vue'
+import PetCard from '../components/PetCard.vue'
 
 const ui = useUi()
 const router = useRouter()
@@ -87,6 +88,8 @@ function pickBook(id: string) {
       <span style="flex: 1" />
       <RouterLink to="/search" class="icon-btn" aria-label="搜尋">🔍</RouterLink>
     </header>
+
+    <PetCard />
 
     <section class="card summary">
       <div class="month">

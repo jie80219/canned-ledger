@@ -94,13 +94,17 @@ const summaries = computed(() => {
               <div>{{ a.name }} <span v-if="a.currency !== currency" class="badge">{{ a.currency }}</span></div>
               <div v-if="summaries.get(a.id)" class="sub">
                 下次繳款 {{ summaries.get(a.id)!.nextDue.slice(5).replace('-', '/') }} ·
-                <template v-if="a.credit?.display === 'available'">已刷 {{ formatMoney(summaries.get(a.id)!.debt, a.currency) }}</template>
+                <template v-if="a.credit?.display === 'available'">未出帳 {{ formatMoney(-summaries.get(a.id)!.unbilled, a.currency) }}</template>
                 <template v-else>可用 {{ formatMoney(summaries.get(a.id)!.available, a.currency) }}</template>
+                <template v-if="summaries.get(a.id)!.billedUnpaid"> · 待繳 {{ formatMoney(summaries.get(a.id)!.billedUnpaid, a.currency) }}</template>
                 <template v-if="a.credit?.autopay !== 'off'"> · 自動扣款</template>
               </div>
             </span>
             <span v-if="a.credit?.display === 'available' && summaries.get(a.id)" class="num" :class="{ expense: summaries.get(a.id)!.available < 0 }">
               <span class="small muted">可用</span> {{ formatMoney(summaries.get(a.id)!.available, a.currency) }}
+            </span>
+            <span v-else-if="summaries.get(a.id)" class="num" :class="{ expense: summaries.get(a.id)!.unbilled > 0 }">
+              <span class="small muted">未出帳</span> {{ formatMoney(-summaries.get(a.id)!.unbilled, a.currency) }}
             </span>
             <span v-else class="num" :class="{ expense: (balanceMap.get(a.id) ?? 0) < 0 }">{{ formatMoney(balanceMap.get(a.id) ?? 0, a.currency) }}</span>
             <span class="chev">›</span>
