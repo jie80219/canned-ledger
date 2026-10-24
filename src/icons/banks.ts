@@ -1,4 +1,4 @@
-// 銀行圖示：48×48 整格，依各家品牌色與 logo 輪廓簡化重畫，不是官方檔案。
+// 銀行圖示：多數是官網或維基共享資源的官方 logo 縮成 128px；聯邦、彰銀、上海商銀、星展照官方 logo 等比例重描成 SVG。
 
 export interface Bank {
   name: string
@@ -6,113 +6,111 @@ export interface Bank {
   body: string
 }
 
-const T = (s: string, c = '#fff', size = 22) =>
-  `<text x="24" y="25" text-anchor="middle" dominant-baseline="central" font-family="-apple-system,'PingFang TC','Noto Sans TC',sans-serif" font-weight="800" font-size="${size}" fill="${c}">${s}</text>`
-const tile = (c: string) => `<rect width="48" height="48" rx="14" fill="${c}"/>`
-const paper = '<rect width="48" height="48" rx="14" fill="#fff"/>'
+const PNG = import.meta.glob<string>('./banks/*.png', { eager: true, query: '?url', import: 'default' })
+const img = (id: string) => `<image href="${PNG[`./banks/${id}.png`]}" width="48" height="48"/>`
+const paper = '<rect width="48" height="48" fill="#fff"/>'
+const SCSB = ['#f5c400', '#f2a900', '#ef8c00', '#ea6a0c', '#c7348c', '#cf2a7c', '#df1460', '#e4003a']
 
 export const BANKS: Record<string, Bank> = {
   'bank-ubot': {
     name: '聯邦銀行',
     color: '#1d4f9c',
-    body: `${paper}<path d="M8 10h7v17a5 5 0 0 0 10 0V10h-0" fill="none" stroke="#1d4f9c" stroke-width="7"/><path d="M27 9h9l6 7-6 7h-9l6-7Z" fill="#1a9aa0"/><path d="M27 25h9l6 7-6 7h-9l6-7Z" fill="#e2134f"/>`,
+    body: `${paper}<g transform="translate(4 4) scale(.833)"><path d="M1 5h10v28a5 5 0 0 0 10 0V5h5.5v28a10.5 10.5 0 0 1-10.5 10.5H11.5A10.5 10.5 0 0 1 1 33Z" fill="#0b4ea2"/><path d="M26.5 5h10l10 10-10 10h-10l7-10Z" fill="#008a96"/><path d="M26.5 25h10l10 10-10 10h-10l7-10Z" fill="#e4003a"/></g>`,
   },
   'bank-ctbc': {
     name: '中國信託',
     color: '#e60012',
-    body: `${paper}<g fill="#e60012">${[0, 72, 144, 216, 288].map((r) => `<ellipse cx="24" cy="13" rx="7" ry="9" transform="rotate(${r} 24 24)"/>`).join('')}</g><circle cx="24" cy="24" r="5" fill="#fff"/><circle cx="24" cy="24" r="2.5" fill="#00a050"/>`,
+    body: img('ctbc'),
   },
   'bank-mega': {
     name: '兆豐銀行',
     color: '#b8862b',
-    body: `${paper}<circle cx="24" cy="24" r="19" fill="#c99a3c"/><path d="M24 5a19 19 0 0 1 0 38" fill="#8a6118"/><path d="M33 10C22 8 14 14 21 21s5 15-6 17" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round"/>`,
+    body: img('mega'),
   },
   'bank-first': {
     name: '第一銀行',
     color: '#0b7a4b',
-    body: `${paper}<path d="M38 12A18 18 0 1 0 38 36" fill="none" stroke="#b8862b" stroke-width="5" stroke-linecap="round"/><path d="M33 16A12 12 0 1 0 33 32" fill="none" stroke="#0b7a4b" stroke-width="4" stroke-linecap="round"/><path d="M24 17l7 7-7 7-7-7Z" fill="#c99a3c"/>`,
+    body: img('first'),
   },
   'bank-post': {
     name: '中華郵政',
     color: '#2d4fa8',
-    body: `${paper}<circle cx="24" cy="24" r="17" fill="none" stroke="#2d4fa8" stroke-width="4"/>${T('郵', '#e2231a', 18)}`,
+    body: img('post'),
   },
   'bank-taishin': {
     name: '台新銀行',
     color: '#d6001c',
-    body: `${paper}<path d="M8 8h32v10H18v4h22v18H8V30h22v-4H8Z" fill="#d6001c"/><path d="M14 13h20M14 35h20" stroke="#fff" stroke-width="2"/>`,
+    body: img('taishin'),
   },
   'bank-linepay': {
     name: 'LINE Pay',
     color: '#06c755',
-    body: `${tile('#06c755')}${T('Pay', '#fff', 17)}`,
+    body: img('linepay'),
   },
   'bank-sinopac': {
     name: '永豐銀行',
     color: '#e5141b',
-    body: `<circle cx="24" cy="24" r="22" fill="#e5141b"/><path d="M10 15h28" stroke="#fff" stroke-width="4"/><path d="M17 20v10c0 3-2 5-6 5M31 20v10c0 3 2 5 6 5M24 20v18" fill="none" stroke="#fff" stroke-width="4"/>`,
+    body: img('sinopac'),
   },
   'bank-yuanta': {
     name: '元大',
     color: '#1561b0',
-    body: `${paper}<g transform="translate(24 24)">${['#1561b0', '#2a7fd0', '#5aa6e6', '#1561b0', '#2a7fd0', '#5aa6e6']
-      .map((c, i) => `<path d="M-4-7h8l5-12H-9Z" fill="${c}" transform="rotate(${i * 60})"/>`)
-      .join('')}</g>`,
+    body: img('yuanta'),
   },
   'bank-firstrade': {
     name: 'Firstrade',
     color: '#123f7f',
-    body: `${tile('#123f7f')}<path d="M24 8l13 15-11-5v22h-4V18l-11 5Z" fill="#fff"/>`,
+    body: img('firstrade'),
   },
   'bank-cathay': {
     name: '國泰世華',
     color: '#00a160',
-    body: `${paper}<circle cx="24" cy="19" r="12" fill="#00a160"/><circle cx="15" cy="23" r="7" fill="#3cbf7f"/><circle cx="33" cy="23" r="7" fill="#3cbf7f"/><path d="M22 27h4v14h-4Z" fill="#00a160"/>`,
+    body: img('cathay'),
   },
   'bank-esun': {
     name: '玉山銀行',
     color: '#009b8f',
-    body: `<circle cx="24" cy="24" r="22" fill="#009b8f"/><path d="M8 30l7-6 4 2 6-9 4 6 3-2 8 9-6-3-3 1-5-5-6 7-4-3Z" fill="#fff"/>`,
+    body: img('esun'),
   },
   'bank-fubon': {
     name: '台北富邦',
     color: '#0071bc',
-    body: `${tile('#0071bc')}<path d="M14 36V14c0-2 1-3 3-3h18v6H21v5h12v6H21v8Z" fill="#fff"/><circle cx="35" cy="34" r="3" fill="#36c2e8"/>`,
+    body: img('fubon'),
   },
   'bank-bot': {
     name: '臺灣銀行',
-    color: '#1b3f8b',
-    body: `${paper}<circle cx="24" cy="24" r="19" fill="#1b3f8b"/><circle cx="24" cy="24" r="15" fill="none" stroke="#e8c15a" stroke-width="1.5"/>${T('臺', '#fff', 17)}`,
+    color: '#e3abca',
+    body: img('bot'),
   },
   'bank-tcb': {
     name: '合作金庫',
     color: '#00964c',
-    body: `${tile('#00964c')}${T('合庫', '#fff', 15)}`,
+    body: img('tcb'),
   },
   'bank-hncb': {
     name: '華南銀行',
     color: '#d7182a',
-    body: `${tile('#d7182a')}${T('華南', '#fff', 15)}`,
+    body: img('hncb'),
   },
   'bank-chb': {
     name: '彰化銀行',
     color: '#0b5aa6',
-    body: `${tile('#0b5aa6')}${T('彰銀', '#fff', 15)}`,
+    body: `<rect width="48" height="48" fill="#ee2a24"/><rect x="5" y="5" width="38" height="38" fill="none" stroke="#fff" stroke-width="1.2"/><text x="24" y="24" text-anchor="middle" dominant-baseline="central" font-family="Didot,'Bodoni 72',Georgia,serif" font-size="15" font-weight="700" fill="none" stroke="#fff" stroke-width=".9">CHB</text><path d="M5 35h38" stroke="#fff" stroke-width="1.2"/>`,
   },
   'bank-landbank': {
     name: '土地銀行',
     color: '#2b8a3e',
-    body: `${tile('#2b8a3e')}${T('土銀', '#fff', 15)}`,
+    body: img('landbank'),
   },
   'bank-scsb': {
     name: '上海商銀',
     color: '#e85d75',
-    body: `<defs><linearGradient id="scsb" x1="0" x2="1"><stop offset="0" stop-color="#f6c23e"/><stop offset=".5" stop-color="#f08a4b"/><stop offset="1" stop-color="#d6337a"/></linearGradient></defs><circle cx="24" cy="24" r="21" fill="url(#scsb)"/><path d="M15 8v32M21 4v40M27 4v40M33 8v32" stroke="#fff" stroke-opacity=".35" stroke-width="2"/>`,
+    body: `${paper}<clipPath id="scsb"><circle cx="24" cy="24" r="19"/></clipPath><g clip-path="url(#scsb)">${SCSB.map((c, i) => `<rect x="${5 + i * 4.75}" y="5" width="4.8" height="38" fill="${c}"/>`).join('')}</g>`,
   },
   'bank-dbs': {
     name: '星展銀行',
     color: '#ff3e3e',
-    body: `${tile('#ee2a2f')}<path d="M24 9c1 8 7 14 15 15-8 1-14 7-15 15-1-8-7-14-15-15 8-1 14-7 15-15Z" fill="#fff"/>`,
+    body: `${paper}<g transform="translate(24 24) scale(1.25) translate(-13.4 -13.7)" fill-rule="evenodd"><path d="M4.457 22.731h17.883V4.667H4.457Z" fill="#fff"/><path d="M21.75,22.16 L15.26,16.66 C15.26,16.66 14.38,15.8 13.40,15.8 C12.40,15.8 11.52,16.66 11.52,16.66 L5.03,22.16 L5.01,22.14 L10.46,15.59 C10.46,15.59 11.31,14.70 11.31,13.69 C11.31,12.69 10.46,11.81 10.46,11.81 L5.01,5.25 L5.03,5.23 L11.52,10.73 C11.52,10.73 12.40,11.60 13.40,11.60 C14.38,11.60 15.26,10.73 15.26,10.73 L21.75,5.23 L21.78,5.25 L16.32,11.81 C16.32,11.81 15.47,12.69 15.47,13.69 C15.47,14.70 16.32,15.59 16.32,15.59 L21.78,22.14 L21.75,22.16 Z M24.79,13.69 L24.79,13.69 C24.79,11.91 24.86,10.32 26.16,7.52 C26.54,6.71 27.38,5.52 26.15,4.14 C25.15,3.13 24.01,3.30 23.25,3.74 C23.69,2.97 23.85,1.82 22.85,0.81 C21.48,-0.42 20.31,0.41 19.50,0.8 C16.73,2.12 15.16,2.19 13.40,2.19 C11.62,2.19 10.05,2.12 7.29,0.8 C6.48,0.41 5.30,-0.42 3.93,0.81 C2.93,1.82 3.10,2.97 3.54,3.74 C2.78,3.3 1.64,3.13 0.64,4.14 C-0.58,5.52 0.25,6.71 0.62,7.52 C1.93,10.32 2.00,11.91 2.00,13.69 C2.00,15.48 1.93,17.07 0.62,19.87 C0.25,20.68 -0.58,21.87 0.64,23.25 C1.64,24.26 2.78,24.09 3.54,23.65 C3.10,24.43 2.93,25.57 3.93,26.57 C5.30,27.82 6.48,26.98 7.29,26.59 C10.06,25.27 11.62,25.20 13.40,25.20 C15.16,25.20 16.73,25.27 19.50,26.59 C20.31,26.98 21.48,27.82 22.85,26.57 C23.85,25.57 23.68,24.43 23.25,23.65 C24.01,24.09 25.15,24.26 26.15,23.25 C27.38,21.87 26.54,20.68 26.16,19.87 C24.86,17.07 24.79,15.48 24.79,13.69 L24.79,13.69 Z" fill="#ff3333"/></g>`,
   },
 }
 
