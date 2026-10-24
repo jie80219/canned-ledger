@@ -57,7 +57,7 @@ const converted = computed(() =>
 const topCats = computed(() =>
   categories.value.filter((c) => c.kind === (kind.value === 'income' ? 'income' : 'expense') && !c.parentId && !c.hidden),
 )
-const subCats = computed(() => categories.value.filter((c) => c.parentId === parentId.value && !c.hidden))
+const subCats = computed(() => (parentId.value ? categories.value.filter((c) => c.parentId === parentId.value && !c.hidden) : []))
 const recentCats = ref<string[]>([])
 
 function pickTop(id: string) {
