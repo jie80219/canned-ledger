@@ -65,6 +65,7 @@ const summaries = computed(() => {
     <header class="topbar">
       <h1>帳戶</h1>
       <button v-if="visible.length > 1" class="text-btn" @click="sorting = !sorting">{{ sorting ? '完成' : '排序' }}</button>
+      <RouterLink v-if="!sorting && visible.length > 1" to="/swipe" class="text-btn">滑滑轉帳</RouterLink>
       <RouterLink v-if="!sorting" to="/accounts/new" class="icon-btn" aria-label="新增帳戶">＋</RouterLink>
     </header>
 
@@ -128,7 +129,8 @@ const summaries = computed(() => {
 </template>
 
 <style scoped>
-.topbar .text-btn { margin-left: auto; border: 0; background: transparent; color: var(--accent); font: inherit; font-weight: 600; padding: 6px 8px; }
+.topbar .text-btn { text-decoration: none; }
+.topbar button.text-btn { margin-left: auto; border: 0; background: transparent; color: var(--accent); font: inherit; font-weight: 600; padding: 6px 8px; }
 .handle { flex: none; width: 34px; height: 34px; display: grid; place-items: center; color: var(--muted); font-size: 1.25rem; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
 .sortable-ghost { opacity: 0.4; }
 .worth .big { font-size: 1.875rem; font-weight: 700; }

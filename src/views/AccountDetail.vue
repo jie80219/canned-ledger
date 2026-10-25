@@ -83,6 +83,7 @@ const lbl = (d: string) => d.slice(5).replace('-', '/')
 <template>
   <main v-if="account" class="page no-nav">
     <TopBar :title="account.name" back>
+      <RouterLink :to="`/swipe?from=${id}`" class="text-btn">轉帳</RouterLink>
       <RouterLink :to="`/accounts/${id}/edit`" class="icon-btn" aria-label="編輯">✎</RouterLink>
     </TopBar>
 
@@ -155,6 +156,7 @@ const lbl = (d: string) => d.slice(5).replace('-', '/')
 </template>
 
 <style scoped>
+.text-btn { margin-left: auto; color: var(--accent); font-weight: 600; padding: 6px 8px; text-decoration: none; }
 .head { display: flex; align-items: center; gap: 14px; }
 .big-emoji { width: 52px; height: 52px; font-size: 1.625rem; border-radius: 16px; }
 .bal { font-size: 1.75rem; font-weight: 700; }

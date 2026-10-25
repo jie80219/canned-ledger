@@ -247,6 +247,7 @@ const title = computed(() => (existing.value ? '編輯' : '記一筆'))
       <span v-else class="cur-btn static">{{ accCur }}</span>
       <div class="value num" :class="kind">{{ expr || '0' }}</div>
     </div>
+    <RouterLink v-if="kind === 'transfer' && !existing" :to="`/swipe?from=${accountId}`" replace class="swipe-link small">改用滑滑轉帳 ›</RouterLink>
     <div v-if="isForeign" class="fx small">
       <template v-if="rateLoading">取得匯率中…</template>
       <template v-else-if="rate">
@@ -344,6 +345,7 @@ const title = computed(() => (existing.value ? '編輯' : '記一筆'))
 .value { flex: 1; text-align: right; font-size: 2.125rem; font-weight: 700; overflow-x: auto; white-space: nowrap; }
 .value.transfer { color: var(--text); }
 .fx { margin: 0 6px 10px; }
+.swipe-link { display: block; text-align: right; margin: -4px 6px 10px; color: var(--accent); text-decoration: none; }
 .recent-label { margin: 2px 4px 6px; }
 .cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px 4px; margin-bottom: 10px; }
 .cat { border: 0; background: transparent; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 0.75rem; padding: 2px 0; }
