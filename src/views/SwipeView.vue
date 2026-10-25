@@ -145,7 +145,7 @@ async function submit() {
   if (amount <= 0) return ui.notify('請輸入金額')
   const toAmount = cross.value ? toMinor(Math.max(0, evaluate(toExpr.value || '0')), b.currency) : undefined
   if (cross.value && !toAmount) return ui.notify('請輸入轉入金額')
-  const id = await saveTx({ bookId: ui.bookId, kind: 'transfer', date: date.value, accountId: a.id, toAccountId: b.id, toAmount, amount, note: note.value.trim() })
+  const id = await saveTx({ bookId: ui.bookId, kind: 'transfer', date: date.value, accountId: a.id, toAccountId: b.id, toAmount, amount, note: note.value.trim(), hideInList: ui.transferInList ? undefined : true })
   toId.value = ''
   clearTimeout(undoTimer)
   undo.value = { id, text: `已轉 ${formatMoney(amount, a.currency)} → ${b.name}` }
@@ -223,6 +223,7 @@ const label = (a: Account) => {
         <input v-model="date" type="date" aria-label="日期" />
         <input v-model="note" placeholder="備註" aria-label="備註" />
       </div>
+      <label class="in-list small muted"><input type="checkbox" :checked="ui.transferInList" @change="ui.setInList('transfer', ($event.target as HTMLInputElement).checked)" /> 顯示在明細</label>
       <Keypad v-model="expr" :decimals="cinfo(from.currency).decimals" @submit="submit" />
     </Sheet>
 
@@ -257,4 +258,6 @@ const label = (a: Account) => {
 .undo { position: fixed; left: 16px; right: 16px; max-width: 480px; margin: 0 auto; bottom: calc(24px + env(safe-area-inset-bottom)); z-index: 50; display: flex; align-items: center; gap: 10px; background: var(--text); color: var(--bg); border-radius: 14px; padding: 12px 14px; }
 .undo span { flex: 1; }
 .undo button { border: 0; background: transparent; color: var(--accent-soft); font: inherit; font-weight: 700; }
+.in-list { display: flex; align-items: center; gap: 6px; margin: 0 4px 8px; }
+.in-list input { width: 18px; height: 18px; accent-color: var(--accent); }
 </style>

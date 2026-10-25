@@ -32,6 +32,8 @@ const parentId = ref<string>()
 const categoryId = ref<string>()
 const accountId = ref('')
 const toAccountId = ref('')
+// 轉帳是否顯示在首頁明細；新增時沿用上次選擇，編輯時照原本那筆
+const inList = ref(ui.transferInList)
 const toExpr = ref('') // 跨幣別轉帳的轉入金額
 const date = ref(today())
 const note = ref('')
@@ -160,6 +162,7 @@ onMounted(async () => {
     kind.value = src.kind === 'adjust' ? 'income' : src.kind
     accountId.value = src.accountId
     toAccountId.value = src.toAccountId ?? ''
+    inList.value = !src.hideInList
     const acc = await db.accounts.get(src.accountId)
     if (src.original) {
       inputCurrency.value = src.original.currency
@@ -211,6 +214,7 @@ async function save(again = false) {
     date: date.value,
     accountId: accountId.value,
     note: note.value.trim(),
+    hideInList: kind.value === 'transfer' && !inList.value ? true : undefined,
     amount: minor.value,
     categoryId: kind.value === 'transfer' ? undefined : categoryId.value,
     toAccountId: kind.value === 'transfer' ? toAccountId.value : undefined,
@@ -376,6 +380,11 @@ const title = computed(() => (existing.value ? '編輯' : '記一筆'))
           <option v-for="a in transferAccounts.filter((a) => a.id !== accountId)" :key="a.id" :value="a.id">{{ iconText(a.icon) }} {{ a.name }}（{{ a.currency }}）</option>
         </select>
       </div>
+      <label v-if="kind === 'transfer'" class="field">
+        <span class="label">顯示在明細</span>
+        <span class="grow" />
+        <input v-model="inList" type="checkbox" @change="!existing && ui.setInList('transfer', inList)" />
+      </label>
       <div v-if="crossTransfer" class="field">
         <label>轉入金額</label>
         <input v-model="toExpr" inputmode="decimal" />

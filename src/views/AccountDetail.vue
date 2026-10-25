@@ -72,7 +72,7 @@ async function adjust() {
   const want = toMinor(evaluate(raw.replace(/^-/, '')), cur.value) * (neg ? -1 : 1)
   const diff = want - balance.value
   if (diff) {
-    await saveTx({ bookId: account.value!.bookId, kind: 'adjust', date: today(), amount: diff, accountId: props.id, note: '餘額調整' })
+    await saveTx({ bookId: account.value!.bookId, kind: 'adjust', date: today(), amount: diff, accountId: props.id, note: '餘額調整', hideInList: ui.adjustInList ? undefined : true })
     ui.notify('已調整餘額')
   }
   showAdjust.value = false
@@ -148,6 +148,7 @@ const lbl = (d: string) => d.slice(5).replace('-', '/')
       <p class="help" style="margin: 0 4px 12px">輸入實際餘額，差額會記成一筆「餘額調整」。{{ account.credit ? '信用卡欠款請輸入負數。' : '' }}</p>
       <div class="list">
         <div class="field"><label>實際餘額</label><input v-model="target" inputmode="decimal" /><span class="hint">{{ cur }}</span></div>
+        <label class="field"><span class="label">顯示在明細</span><span class="grow" /><input type="checkbox" :checked="ui.adjustInList" @change="ui.setInList('adjust', ($event.target as HTMLInputElement).checked)" /></label>
       </div>
       <button class="btn block" @click="adjust">確定</button>
     </Sheet>

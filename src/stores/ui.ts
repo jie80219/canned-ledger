@@ -31,6 +31,8 @@ export const useUi = defineStore('ui', {
     toast: '' as string,
     scheduler: null as SchedulerResult | null,
     locked: false,
+    transferInList: load('cl.transferInList', true),
+    adjustInList: load('cl.adjustInList', true),
   }),
   actions: {
     setBook(id: string) {
@@ -51,6 +53,11 @@ export const useUi = defineStore('ui', {
       this.fontScale = f
       save('cl.fontScale', f)
       applyFontScale(f)
+    },
+    setInList(kind: 'transfer' | 'adjust', v: boolean) {
+      if (kind === 'transfer') this.transferInList = v
+      else this.adjustInList = v
+      save(kind === 'transfer' ? 'cl.transferInList' : 'cl.adjustInList', v)
     },
     notify(msg: string) {
       this.toast = msg

@@ -34,6 +34,7 @@ const monthTxs = useLive<Transaction[]>(
   [],
   [bookId, range],
 )
+const listed = computed(() => monthTxs.value.filter((t) => !t.hideInList))
 const sum = computed(() => totals(monthTxs.value, conv.value))
 
 const pendingCount = useLive(
@@ -132,7 +133,7 @@ function pickBook(id: string) {
       <RouterLink to="/settings/data" class="chip">🧾 匯入發票</RouterLink>
     </div>
 
-    <TxList v-if="monthTxs.length" :txs="monthTxs" :accounts="accountMap" :categories="categoryMap" show-day-total />
+    <TxList v-if="listed.length" :txs="listed" :accounts="accountMap" :categories="categoryMap" show-day-total />
     <div v-else class="empty">
       <div class="big">🐹</div>
       這個月還沒有記帳<br />點下方 ＋ 記第一筆吧

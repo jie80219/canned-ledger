@@ -91,6 +91,8 @@ export interface Transaction {
   recurringId?: string
   autopayOf?: { cardId: string; cycleEnd: DateStr }
   invoiceNo?: string
+  /** 不顯示在首頁明細（轉帳、餘額調整可選），餘額照算 */
+  hideInList?: boolean
   /** 自動產生來源的唯一鍵（r:/a:/inv:），靠 unique index 防重複；一般交易不設定 */
   autoKey?: string
   createdAt: number
