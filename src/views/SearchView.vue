@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ACCOUNT_TYPE_LABEL, byType } from '../domain/accounts'
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { db } from '../db/schema'
@@ -78,22 +79,22 @@ async function confirmAll() {
     <div v-if="showFilters" class="list">
       <div class="field">
         <label>類型</label>
-        <select v-model="kind"><option value="">全部</option><option value="expense">支出</option><option value="income">收入</option><option value="transfer">轉帳</option></select>
+        <USelect v-model="kind"><option value="">全部</option><option value="expense">支出</option><option value="income">收入</option><option value="transfer">轉帳</option></USelect>
       </div>
       <div class="field">
         <label>分類</label>
-        <select v-model="categoryId">
+        <USelect v-model="categoryId">
           <option value="">全部</option>
-          <option v-for="c in catOptions" :key="c.id" :value="c.id">{{ iconText(c.icon) }} {{ c.parentId ? '　' : '' }}{{ c.name }}</option>
-        </select>
+          <option v-for="c in catOptions" :key="c.id" :value="c.id" :data-icon="c.icon" :data-color="c.color">{{ c.parentId ? '　' : '' }}{{ c.name }}</option>
+        </USelect>
       </div>
       <div class="field">
         <label>帳戶</label>
-        <select v-model="accountId"><option value="">全部</option><option v-for="a in accounts" :key="a.id" :value="a.id">{{ iconText(a.icon) }} {{ a.name }}</option></select>
+        <USelect v-model="accountId"><option value="">全部</option><option v-for="a in byType(accounts)" :key="a.id" :value="a.id" :data-icon="a.icon" :data-color="a.color" :data-group="ACCOUNT_TYPE_LABEL[a.type]">{{ a.name }}</option></USelect>
       </div>
       <div class="field">
         <label>狀態</label>
-        <select v-model="status"><option value="">全部</option><option value="pending">待確認</option><option value="confirmed">已確認</option></select>
+        <USelect v-model="status"><option value="">全部</option><option value="pending">待確認</option><option value="confirmed">已確認</option></USelect>
       </div>
       <div class="field"><label>日期</label><input v-model="from" type="date" /><span class="hint">至</span><input v-model="to" type="date" /></div>
       <div class="field"><label>金額</label><input v-model="min" inputmode="decimal" placeholder="最低" /><span class="hint">–</span><input v-model="max" inputmode="decimal" placeholder="最高" /></div>

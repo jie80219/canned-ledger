@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ACCOUNT_TYPE_LABEL, byType } from '../domain/accounts'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import type { Account } from '../db/types'
@@ -171,9 +172,9 @@ const label = (a: Account) => {
     </TopBar>
 
     <section v-if="from" class="card head">
-      <select v-model="fromId" class="from-select" aria-label="轉出帳戶">
-        <option v-for="a in usable" :key="a.id" :value="a.id">{{ a.name }}</option>
-      </select>
+      <USelect v-model="fromId" class="from-select" aria-label="轉出帳戶">
+        <option v-for="a in byType(usable)" :key="a.id" :value="a.id" :data-icon="a.icon" :data-color="a.color" :data-group="ACCOUNT_TYPE_LABEL[a.type]">{{ a.name }}</option>
+      </USelect>
       <div class="bal">
         <span class="small muted">{{ from.type === 'credit' ? '目前' : '餘額' }}</span>
         <b class="num">{{ hidden ? '＊＊＊＊' : label(from) }}</b>
@@ -235,7 +236,7 @@ const label = (a: Account) => {
 
 <style scoped>
 .head { display: flex; flex-direction: column; gap: 6px; }
-.from-select { font: inherit; font-size: 1.0625rem; font-weight: 600; border: 0; background: transparent; padding: 0; color: var(--text); }
+.head :deep(.from-select) { flex: none; font-size: 1.0625rem; font-weight: 600; padding: 0; }
 .bal { display: flex; align-items: baseline; gap: 8px; }
 .bal b { font-size: 1.375rem; }
 .eye { margin-left: auto; border: 0; background: var(--surface-2); border-radius: 99px; padding: 3px 10px; font-size: 0.75rem; color: var(--muted); }

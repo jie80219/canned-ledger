@@ -43,10 +43,10 @@ async function add() {
       <div class="field"><label>關鍵字</label><input v-model="keyword" placeholder="例如：全家、星巴克" maxlength="30" /></div>
       <div class="field">
         <label>分類</label>
-        <select v-model="categoryId">
+        <USelect v-model="categoryId">
           <option value="" disabled>選擇分類</option>
-          <option v-for="c in cats" :key="c.id" :value="c.id">{{ label(c.id) }}</option>
-        </select>
+          <option v-for="c in cats" :key="c.id" :value="c.id" :data-icon="c.icon" :data-color="c.color">{{ label(c.id) }}</option>
+        </USelect>
       </div>
     </div>
     <button class="btn block" :disabled="!keyword.trim() || !categoryId" @click="add">新增規則</button>

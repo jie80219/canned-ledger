@@ -123,10 +123,10 @@ async function remove() {
         </div>
         <div class="field">
           <label>所屬大類</label>
-          <select v-model="edit.parentId">
+          <USelect v-model="edit.parentId">
             <option :value="undefined">（無，當作大類）</option>
-            <option v-for="p in parentOptions" :key="p.id" :value="p.id">{{ p.name }}</option>
-          </select>
+            <option v-for="p in parentOptions" :key="p.id" :value="p.id" :data-icon="p.icon" :data-color="p.color">{{ p.name }}</option>
+          </USelect>
         </div>
         <div v-if="!edit.parentId" class="field">
           <label>顏色</label>

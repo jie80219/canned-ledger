@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ACCOUNT_TYPE_LABEL, byType } from '../domain/accounts'
 import { computed, onMounted, ref } from 'vue'
 import type { Goal, GoalStyle } from '../db/types'
 import { uid } from '../db/schema'
@@ -178,9 +179,9 @@ onMounted(async () => celebrate(await checkProgress()))
         <div class="field"><label>目標金額</label><input v-model="form.amount" inputmode="decimal" /><span class="hint">{{ editCur }}</span></div>
         <div class="field">
           <label>存到</label>
-          <select v-model="editing.accountId" :disabled="!isNew">
-            <option v-for="a in savable" :key="a.id" :value="a.id">{{ a.name }}</option>
-          </select>
+          <USelect v-model="editing.accountId" :disabled="!isNew">
+            <option v-for="a in byType(savable)" :key="a.id" :value="a.id" :data-icon="a.icon" :data-color="a.color" :data-group="ACCOUNT_TYPE_LABEL[a.type]">{{ a.name }}</option>
+          </USelect>
         </div>
         <div class="field"><label>截止日</label><input v-model="editing.deadline" type="date" /></div>
         <div class="field">
