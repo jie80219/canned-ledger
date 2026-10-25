@@ -17,7 +17,8 @@ const ui = useUi()
 const route = useRoute()
 const { accounts, allTxs, balanceMap } = useBalances()
 
-const usable = computed(() => accounts.value.filter((a) => !a.archived))
+// 只放銀行與電子支付
+const usable = computed(() => accounts.value.filter((a) => !a.archived && (a.type === 'bank' || a.type === 'ewallet')))
 const fromId = ref(String(route.query.from ?? ''))
 watch(usable, (v) => {
   if (!v.some((a) => a.id === fromId.value)) fromId.value = (v.find((a) => a.type === 'bank') ?? v[0])?.id ?? ''
@@ -160,8 +161,8 @@ const label = (a: Account) => {
       </div>
     </section>
 
-    <div v-if="!from" class="empty">先新增帳戶才能轉帳</div>
-    <div v-else-if="!targets.length" class="empty">至少要有兩個帳戶才能轉帳</div>
+    <div v-if="!from" class="empty">先新增銀行或電子支付帳戶才能轉帳</div>
+    <div v-else-if="!targets.length" class="empty">至少要有兩個銀行或電子支付帳戶才能轉帳</div>
     <div v-else ref="stage" class="stage">
       <div v-for="(r, k) in ringsUsed" :key="k" class="ring" :style="{ width: `${r.r * 200}%`, height: `${r.r * 200}%` }" />
       <div
