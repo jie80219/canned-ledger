@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { VueDraggable } from 'vue-draggable-plus'
+import { useRoute } from 'vue-router'
 import { uid } from '../db/schema'
 import type { Category, CategoryKind } from '../db/types'
 import { deleteCategory, moveCategory, reorder, saveCategory } from '../db/repo'
@@ -68,6 +69,27 @@ async function commit() {
   if (!c.parentId) for (const ch of childrenOf(c.id)) if (ch.color !== c.color) await saveCategory({ ...ch, color: c.color })
   edit.value = null
 }
+// 從記一筆的編輯模式進來：?edit=分類id 直接開編輯，?new=expense|income 開新增
+const route = useRoute()
+const stopWatch = watch(
+  categories,
+  (list) => {
+    if (!list.length) return
+    const q = route.query
+    if (q.new === 'expense' || q.new === 'income') {
+      kind.value = q.new
+      openNew()
+    } else if (q.edit) {
+      const c = list.find((x) => x.id === q.edit)
+      if (!c) return
+      kind.value = c.kind
+      edit.value = { ...c }
+    } else return
+    queueMicrotask(() => stopWatch())
+  },
+  { immediate: true },
+)
+
 async function toggleHidden() {
   const c = edit.value!
   await saveCategory({ ...c, hidden: !c.hidden })

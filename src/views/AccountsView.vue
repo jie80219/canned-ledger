@@ -48,6 +48,10 @@ const worth = computed(() => {
   return { assets, debts, net: assets - debts }
 })
 
+// 各類別總計（換算成帳本幣別，與淨資產一樣不含不計入淨資產的帳戶）
+const groupTotal = (type: AccountType) =>
+  visible.value.filter((a) => a.type === type && a.includeInNetWorth).reduce((s, a) => s + toBook(a, balanceMap.value.get(a.id) ?? 0), 0)
+
 const summaries = computed(() => {
   const t = today()
   const m = new Map<string, ReturnType<typeof cardSummary>>()
@@ -80,7 +84,7 @@ const summaries = computed(() => {
 
     <template v-for="g in GROUPS" :key="g.type">
       <template v-if="visible.some((a) => a.type === g.type)">
-        <div class="section-label">{{ g.label }}</div>
+        <div class="section-label group-head">{{ g.label }}<span class="num" :class="{ expense: groupTotal(g.type) < 0 }">{{ formatMoney(groupTotal(g.type), currency) }}</span></div>
         <VueDraggable v-if="sorting" v-model="groupLists[g.type]" class="list" handle=".handle" :animation="150" :force-fallback="true" @end="saveOrder">
           <div v-for="a in groupLists[g.type]" :key="a.id" class="row">
             <CatIcon :icon="a.icon" :color="a.color" :size="38" />
@@ -135,5 +139,8 @@ const summaries = computed(() => {
 .sortable-ghost { opacity: 0.4; }
 .worth .big { font-size: 1.875rem; font-weight: 700; }
 .card-amt { display: flex; flex-direction: column; align-items: flex-end; white-space: nowrap; }
+.group-head { display: flex; justify-content: space-between; align-items: baseline; }
+.group-head .num { font-size: 0.875rem; font-weight: 600; color: var(--text); }
+.group-head .num.expense { color: var(--expense); }
 .split { display: flex; gap: 18px; font-size: 0.8125rem; color: var(--muted); margin-top: 4px; }
 </style>

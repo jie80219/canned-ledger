@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { VueDraggable } from 'vue-draggable-plus'
 import { useRoute, useRouter } from 'vue-router'
 import { db } from '../db/schema'
 import { plain } from '../db/factory'
-import type { Transaction, TxKind } from '../db/types'
-import { confirmTx, deleteTx, saveTx } from '../db/repo'
+import type { Category, Transaction, TxKind } from '../db/types'
+import { confirmTx, deleteTx, reorder, saveCategory, saveTx } from '../db/repo'
 import { useBook } from '../composables/useBook'
 import { useUi } from '../stores/ui'
 import { evaluate } from '../domain/calc'
@@ -68,8 +69,53 @@ const recentShown = computed(() =>
 )
 
 function pickTop(id: string) {
+  if (editing.value) return router.push(`/settings/categories?edit=${id}`)
   parentId.value = id
   categoryId.value = id
+}
+
+// 長按分類進入編輯模式（像 iPhone 主畫面）：圖示抖動、拖曳排序、點 − 隱藏、點圖示編輯
+const editing = ref(false)
+const editList = ref<Category[]>([])
+watch([topCats, editing], () => (editList.value = [...topCats.value]), { immediate: true })
+let pressTimer: ReturnType<typeof setTimeout> | undefined
+let pressAt: { x: number; y: number } | null = null
+function pressStart(e: PointerEvent) {
+  if (editing.value) return
+  pressAt = { x: e.clientX, y: e.clientY }
+  clearTimeout(pressTimer)
+  pressTimer = setTimeout(() => {
+    editing.value = true
+    navigator.vibrate?.(10)
+    swallowNextClick()
+  }, 450)
+}
+// 長按觸發後手指放開時的那次 click 會落在新出現的編輯圖示上，要吃掉
+function swallowNextClick() {
+  const eat = (e: Event) => {
+    e.stopPropagation()
+    e.preventDefault()
+  }
+  window.addEventListener('click', eat, { capture: true, once: true })
+  window.addEventListener('pointerup', () => setTimeout(() => window.removeEventListener('click', eat, true), 400), { once: true })
+}
+function pressMove(e: PointerEvent) {
+  if (pressAt && Math.hypot(e.clientX - pressAt.x, e.clientY - pressAt.y) > 8) pressEnd()
+}
+function pressEnd() {
+  pressAt = null
+  clearTimeout(pressTimer)
+}
+onUnmounted(() => clearTimeout(pressTimer))
+const saveCatOrder = () => {
+  const k = kind.value === 'income' ? 'income' : 'expense'
+  const hiddenTops = categories.value.filter((c) => c.kind === k && !c.parentId && c.hidden)
+  return reorder('categories', [...editList.value, ...hiddenTops])
+}
+async function hideCat(c: Category) {
+  await saveCategory({ ...plain(c), hidden: true })
+  if (parentId.value === c.id) parentId.value = categoryId.value = ''
+  ui.notify(`已隱藏「${c.name}」，可到分類管理恢復`)
 }
 
 async function loadRate() {
@@ -262,7 +308,7 @@ const title = computed(() => (existing.value ? '編輯' : '記一筆'))
     </div>
 
     <template v-if="kind !== 'transfer'">
-      <template v-if="recentShown.length && !existing">
+      <template v-if="recentShown.length && !existing && !editing">
         <div class="small muted recent-label">最近使用</div>
         <div class="cat-grid recent">
           <button v-for="id in recentShown" :key="id" class="cat" :class="{ on: categoryId === id }" @click="categoryId = id; parentId = categoryMap.get(id)?.parentId ?? id">
@@ -272,13 +318,44 @@ const title = computed(() => (existing.value ? '編輯' : '記一筆'))
         </div>
         <div class="small muted recent-label">全部分類</div>
       </template>
-      <div class="cat-grid">
-        <button v-for="c in topCats" :key="c.id" class="cat" :class="{ on: parentId === c.id }" @click="pickTop(c.id)">
+      <div v-if="editing" class="edit-bar">
+        <span class="small muted">拖曳排序 · 點圖示編輯 · 點 − 隱藏</span>
+        <button type="button" class="done" @click="editing = false">完成</button>
+      </div>
+      <VueDraggable v-if="editing" v-model="editList" class="cat-grid jiggle" :animation="200" :force-fallback="true" @end="saveCatOrder">
+        <div v-for="(c, i) in editList" :key="c.id" class="cat" :style="{ animationDelay: `${(i % 3) * -0.09}s` }" @click="pickTop(c.id)">
+          <span class="icon-wrap">
+            <CatIcon :icon="c.icon" :color="c.color" :size="46" />
+            <button type="button" class="minus" aria-label="隱藏" @click.stop="hideCat(c)" @pointerdown.stop>−</button>
+          </span>
+          <span>{{ c.name }}</span>
+        </div>
+        <template #footer>
+          <RouterLink :to="`/settings/categories?new=${kind === 'income' ? 'income' : 'expense'}`" class="cat add-tile">
+            <span class="add-icon">＋</span>
+            <span>新增</span>
+          </RouterLink>
+        </template>
+      </VueDraggable>
+      <div v-else class="cat-grid">
+        <button
+          v-for="c in topCats"
+          :key="c.id"
+          class="cat"
+          :class="{ on: parentId === c.id }"
+          @click="pickTop(c.id)"
+          @pointerdown="pressStart"
+          @pointermove="pressMove"
+          @pointerup="pressEnd"
+          @pointercancel="pressEnd"
+          @pointerleave="pressEnd"
+          @contextmenu.prevent
+        >
           <CatIcon :icon="c.icon" :color="c.color" :size="46" />
           <span>{{ c.name }}</span>
         </button>
       </div>
-      <div v-if="subCats.length" class="chips subs">
+      <div v-if="subCats.length && !editing" class="chips subs">
         <button v-for="c in subCats" :key="c.id" class="chip" :class="{ on: categoryId === c.id }" @click="categoryId = categoryId === c.id ? parentId : c.id">
           <CatIcon :icon="c.icon" :color="c.color" :size="24" /> {{ c.name }}
         </button>
@@ -351,6 +428,18 @@ const title = computed(() => (existing.value ? '編輯' : '記一筆'))
 .fx { margin: 0 6px 10px; }
 .swipe-link { display: block; text-align: right; margin: -4px 6px 10px; color: var(--accent); text-decoration: none; }
 .recent-label { margin: 2px 4px 6px; }
+.cat { -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; }
+.edit-bar { display: flex; align-items: center; justify-content: space-between; margin: 0 4px 8px; }
+.edit-bar .done { border: 0; background: var(--accent); color: #fff; font: inherit; font-weight: 600; border-radius: 99px; padding: 5px 14px; }
+.jiggle .cat { position: relative; cursor: grab; animation: jiggle 0.26s ease-in-out infinite alternate; }
+.jiggle .sortable-chosen, .jiggle .sortable-ghost { animation: none; }
+.jiggle .sortable-ghost { opacity: 0.35; }
+.icon-wrap { position: relative; display: inline-block; }
+.minus { position: absolute; top: -7px; left: -7px; width: 22px; height: 22px; border-radius: 50%; border: 0; padding: 0; background: color-mix(in srgb, var(--text) 70%, transparent); color: var(--bg); font-size: 1rem; line-height: 22px; font-weight: 700; }
+.add-tile { text-decoration: none; color: var(--muted); }
+.add-icon { width: 46px; height: 46px; border-radius: 14px; border: 1.5px dashed var(--border); display: grid; place-items: center; font-size: 1.25rem; }
+@keyframes jiggle { from { transform: rotate(-2.2deg); } to { transform: rotate(2.2deg); } }
+@media (prefers-reduced-motion: reduce) { .jiggle .cat { animation: none; } }
 .cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px 4px; margin-bottom: 10px; }
 .cat { border: 0; background: transparent; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 0.75rem; padding: 2px 0; }
 .cat .cat-icon { transition: transform 0.1s; }
