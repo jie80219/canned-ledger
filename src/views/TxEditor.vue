@@ -41,6 +41,10 @@ const showCurrency = ref(false)
 const actualExpr = ref('') // 待確認交易的實際金額
 
 const activeAccounts = computed(() => accounts.value.filter((a) => !a.archived || a.id === accountId.value || a.id === toAccountId.value))
+// 轉帳只在現金、銀行、電子支付之間；信用卡繳款、證券等其他資產與載具補登不列入（編輯舊資料時保留原本選的）
+const transferAccounts = computed(() =>
+  activeAccounts.value.filter((a) => (a.includeInNetWorth && ['cash', 'bank', 'ewallet'].includes(a.type)) || a.id === accountId.value || a.id === toAccountId.value),
+)
 const account = computed(() => accountMap.value.get(accountId.value))
 const toAccount = computed(() => accountMap.value.get(toAccountId.value))
 const accCur = computed(() => account.value?.currency ?? 'TWD')
@@ -285,14 +289,14 @@ const title = computed(() => (existing.value ? '編輯' : '記一筆'))
       <div class="field">
         <label>{{ kind === 'transfer' ? '轉出帳戶' : '帳戶' }}</label>
         <select v-model="accountId">
-          <option v-for="a in activeAccounts" :key="a.id" :value="a.id">{{ iconText(a.icon) }} {{ a.name }}（{{ a.currency }}）</option>
+          <option v-for="a in kind === 'transfer' ? transferAccounts : activeAccounts" :key="a.id" :value="a.id">{{ iconText(a.icon) }} {{ a.name }}（{{ a.currency }}）</option>
         </select>
       </div>
       <div v-if="kind === 'transfer'" class="field">
         <label>轉入帳戶</label>
         <select v-model="toAccountId">
           <option value="" disabled>選擇帳戶</option>
-          <option v-for="a in activeAccounts.filter((a) => a.id !== accountId)" :key="a.id" :value="a.id">{{ iconText(a.icon) }} {{ a.name }}（{{ a.currency }}）</option>
+          <option v-for="a in transferAccounts.filter((a) => a.id !== accountId)" :key="a.id" :value="a.id">{{ iconText(a.icon) }} {{ a.name }}（{{ a.currency }}）</option>
         </select>
       </div>
       <div v-if="crossTransfer" class="field">
