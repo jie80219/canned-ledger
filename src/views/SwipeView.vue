@@ -235,7 +235,7 @@ const label = (a: Account) => {
 
 <style scoped>
 .head { display: flex; flex-direction: column; gap: 6px; }
-.from-select { font: inherit; font-size: 1.0625rem; font-weight: 600; border: 0; background: transparent; padding: 0; color: var(--text); }
+.from-select { font-size: 1.0625rem; font-weight: 600; align-self: flex-start; }
 .bal { display: flex; align-items: baseline; gap: 8px; }
 .bal b { font-size: 1.375rem; }
 .eye { margin-left: auto; border: 0; background: var(--surface-2); border-radius: 99px; padding: 3px 10px; font-size: 0.75rem; color: var(--muted); }
