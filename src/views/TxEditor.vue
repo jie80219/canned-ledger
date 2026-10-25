@@ -27,6 +27,10 @@ const { accounts, categories, categoryMap, accountMap } = useBook()
 const existing = ref<Transaction>()
 const kind = ref<Exclude<TxKind, 'adjust'>>('expense')
 const expr = ref('')
+const valueEl = ref<HTMLElement>()
+// 算式變長就縮字，並捲到最右邊讓最後輸入的數字永遠看得到
+const valueSize = computed(() => (expr.value.length > 14 ? 'xs' : expr.value.length > 9 ? 'sm' : ''))
+watch(expr, () => nextTick(() => valueEl.value && (valueEl.value.scrollLeft = valueEl.value.scrollWidth)))
 const inputCurrency = ref('TWD')
 const parentId = ref<string>()
 const categoryId = ref<string>()
@@ -299,7 +303,8 @@ const title = computed(() => (existing.value ? '編輯' : '記一筆'))
     <div class="amount card">
       <button v-if="kind !== 'transfer'" class="cur-btn" @click="showCurrency = true">{{ inputCurrency }} ▾</button>
       <span v-else class="cur-btn static">{{ accCur }}</span>
-      <div class="value num" :class="kind">{{ expr || '0' }}</div>
+      <input v-model="note" class="note-in" placeholder="備註" maxlength="200" />
+      <div ref="valueEl" class="value num" :class="[kind, valueSize]">{{ expr || '0' }}</div>
     </div>
     <RouterLink v-if="kind === 'transfer' && !existing" :to="`/swipe?from=${accountId}`" replace class="swipe-link small">改用滑滑轉帳 ›</RouterLink>
     <div v-if="isForeign" class="fx small">
@@ -399,10 +404,6 @@ const title = computed(() => (existing.value ? '編輯' : '記一筆'))
         <label>日期</label>
         <input v-model="date" type="date" required />
       </div>
-      <div class="field">
-        <label>備註</label>
-        <input v-model="note" placeholder="寫點什麼…" maxlength="200" />
-      </div>
     </div>
 
     <div class="actions">
@@ -432,7 +433,12 @@ const title = computed(() => (existing.value ? '編輯' : '記一筆'))
 .amount { display: flex; align-items: center; gap: 10px; padding: 10px 14px; margin-bottom: 6px; }
 .cur-btn { border: 0; background: var(--surface-2); border-radius: 10px; padding: 6px 10px; font-weight: 600; font-size: 0.8125rem; }
 .cur-btn.static { color: var(--muted); }
-.value { flex: 1; text-align: right; font-size: 2.125rem; font-weight: 700; overflow-x: auto; white-space: nowrap; }
+.note-in { flex: 1 1 0; min-width: 0; border: 0; background: transparent; padding: 6px 2px; font-size: 0.9375rem; }
+.note-in:focus { outline: none; }
+.value { flex: 0 1 auto; max-width: 62%; text-align: right; font-size: 1.625rem; font-weight: 700; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+.value::-webkit-scrollbar { display: none; }
+.value.sm { font-size: 1.3125rem; }
+.value.xs { font-size: 1.0625rem; }
 .value.transfer { color: var(--text); }
 .fx { margin: 0 6px 10px; }
 .swipe-link { display: block; text-align: right; margin: -4px 6px 10px; color: var(--accent); text-decoration: none; }
