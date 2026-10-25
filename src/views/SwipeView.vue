@@ -17,8 +17,8 @@ const ui = useUi()
 const route = useRoute()
 const { accounts, allTxs, balanceMap } = useBalances()
 
-// 只放現金、銀行與電子支付
-const usable = computed(() => accounts.value.filter((a) => !a.archived && ['cash', 'bank', 'ewallet'].includes(a.type)))
+// 只放現金、銀行與電子支付；不計入淨資產的帳戶（例如載具補登）不是真的錢，不列入
+const usable = computed(() => accounts.value.filter((a) => !a.archived && a.includeInNetWorth && ['cash', 'bank', 'ewallet'].includes(a.type)))
 const fromId = ref(String(route.query.from ?? ''))
 watch(usable, (v) => {
   if (!v.some((a) => a.id === fromId.value)) fromId.value = (v.find((a) => a.type === 'bank') ?? v[0])?.id ?? ''
@@ -42,22 +42,37 @@ const targets = computed(() => {
   return usable.value.filter((a) => a.id !== fromId.value).sort((a, b) => (n.get(b.id) ?? 0) - (n.get(a.id) ?? 0))
 })
 
-// 由內到外三圈，各圈容量 5 / 8 / 12
-const RINGS = [{ r: 0.21, cap: 5 }, { r: 0.32, cap: 8 }, { r: 0.43, cap: 12 }]
+// 由內到外最多三圈，先決定要幾圈，再依半徑比例平均分配，避免外圈只剩零星幾個
+const RINGS = [{ r: 0.21, cap: 6 }, { r: 0.32, cap: 9 }, { r: 0.43, cap: 12 }]
+const ringsUsed = computed(() => {
+  const n = targets.value.length
+  let k = 1
+  while (k < RINGS.length && RINGS.slice(0, k).reduce((s, r) => s + r.cap, 0) < n) k++
+  // 最外圈固定撐到畫面邊緣附近，圈數少時圈距拉開
+  const f = 0.4 / RINGS[k - 1].r
+  return RINGS.slice(0, k).map((r) => ({ ...r, r: k === 1 ? 0.3 : r.r * f }))
+})
 const placed = computed(() => {
+  const rings = ringsUsed.value
+  const total = rings.reduce((s, r) => s + r.r, 0)
+  let left = targets.value.length
+  const counts = rings.map((r, k) => {
+    const c = k === rings.length - 1 ? left : Math.min(r.cap, Math.round((targets.value.length * r.r) / total))
+    left -= c
+    return c
+  })
   const out: Array<{ a: Account; x: number; y: number }> = []
   let i = 0
-  for (const ring of RINGS) {
-    const items = targets.value.slice(i, i + ring.cap)
-    items.forEach((a, k) => {
-      const ang = -Math.PI / 2 + (k / items.length) * Math.PI * 2 + (ring.r > 0.21 ? Math.PI / items.length : 0)
+  rings.forEach((ring, k) => {
+    const items = targets.value.slice(i, i + counts[k])
+    items.forEach((a, j) => {
+      const ang = -Math.PI / 2 + ((j + (k % 2) / 2) / items.length) * Math.PI * 2
       out.push({ a, x: 0.5 + ring.r * Math.cos(ang), y: 0.5 + ring.r * Math.sin(ang) })
     })
     i += items.length
-  }
+  })
   return out
 })
-const ringsUsed = computed(() => RINGS.filter((_, k) => targets.value.length > RINGS.slice(0, k).reduce((s, r) => s + r.cap, 0)))
 
 const stage = ref<HTMLElement>()
 const drag = ref<{ x: number; y: number } | null>(null)
@@ -85,8 +100,13 @@ function onDown(e: PointerEvent) {
 }
 function onMove(e: PointerEvent) {
   if (!drag.value) return
+  if (e.pointerType === 'mouse' && !e.buttons) return onCancel()
   drag.value = local(e)
   hoverId.value = hitTest(drag.value)
+}
+function onCancel() {
+  drag.value = null
+  hoverId.value = ''
 }
 function onUp() {
   if (!drag.value) return
@@ -186,12 +206,12 @@ const label = (a: Account) => {
         @pointerdown="onDown"
         @pointermove="onMove"
         @pointerup="onUp"
-        @pointercancel="drag = null; hoverId = ''"
+        @pointercancel="onCancel"
       >
         <CatIcon :icon="from.icon" :color="from.color" :size="68" />
       </div>
-      <div v-if="!drag" class="hint small">拖曳中間的頭像到要轉入的帳戶</div>
     </div>
+    <div v-if="from && targets.length" class="hint small">拖曳中間的頭像到要轉入的帳戶，或直接點帳戶</div>
 
     <Sheet v-if="to && from" :title="`${from.name} → ${to.name}`" @close="toId = ''">
       <div class="amt num">{{ shown }} <span class="small muted">{{ from.currency }}</span></div>
@@ -230,7 +250,7 @@ const label = (a: Account) => {
 .center.dragging { transition: none; cursor: grabbing; transform: translate(-50%, -50%) scale(0.85); }
 .line { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .line line { stroke: var(--accent); stroke-width: 0.6; stroke-dasharray: 2 1.5; }
-.hint { position: absolute; left: 50%; top: calc(50% + 48px); transform: translateX(-50%); color: var(--muted); white-space: nowrap; pointer-events: none; }
+.hint { text-align: center; color: var(--muted); margin-top: -6px; }
 .amt { font-size: 2rem; font-weight: 700; text-align: right; margin: 4px 4px 10px; }
 .row2 { display: flex; gap: 8px; margin-bottom: 10px; }
 .row2 input, .field input { flex: 1; min-width: 0; font-size: 1rem; }

@@ -5,6 +5,10 @@ import App from './App.vue'
 import { router } from './router'
 import './styles.css'
 
-registerSW({ immediate: true })
+// iOS 從背景切回來不會重新載入，切回前景時主動檢查新版
+registerSW({
+  immediate: true,
+  onRegisteredSW: (_url, r) => document.addEventListener('visibilitychange', () => document.visibilityState === 'visible' && r?.update()),
+})
 
 createApp(App).use(createPinia()).use(router).mount('#app')
