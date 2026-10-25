@@ -1,4 +1,4 @@
-// 銀行圖示：多數是官網或維基共享資源的官方 logo 縮成 128px；聯邦、彰銀、上海商銀、星展照官方 logo 等比例重描成 SVG。
+// 銀行圖示：多數是官網或維基共享資源的官方 logo 縮成 128px；聯邦、彰銀、上海商銀、星展照官方 logo 等比例重描成 SVG；中信依使用者提供的 We are family 圖重繪。
 
 export interface Bank {
   name: string
@@ -20,7 +20,7 @@ export const BANKS: Record<string, Bank> = {
   'bank-ctbc': {
     name: '中國信託',
     color: '#e60012',
-    body: img('ctbc'),
+    body: `<rect width="48" height="48" fill="#0e7f80"/><circle cx="24" cy="24" r="20" fill="#e3141b"/><circle cx="24" cy="24" r="20" fill="url(#ctbc-shade)"/><defs><radialGradient id="ctbc-shade" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#ff5a4f"/><stop offset=".6" stop-color="#e3141b" stop-opacity="0"/><stop offset="1" stop-color="#9e0b10" stop-opacity=".6"/></radialGradient></defs><ellipse cx="15.5" cy="13" rx="5" ry="3.2" transform="rotate(-35 15.5 13)" fill="#fff" opacity=".45"/><text x="24" y="20" text-anchor="middle" font-family="Snell Roundhand, Brush Script MT, cursive" font-style="italic" font-size="9.5" fill="#fff">We are</text><text x="24" y="28.5" text-anchor="middle" font-family="Snell Roundhand, Brush Script MT, cursive" font-style="italic" font-size="10" fill="#fff">family</text><rect x="19.5" y="31" width="9" height="9" fill="#0a9b48"/><rect x="21" y="33" width="6" height="5" rx="1.2" fill="#fff"/><path d="M21.8 33.8h1.8v3.4h-1.8ZM24.4 33.8h1.8v3.4h-1.8Z" fill="#e3141b"/>`,
   },
   'bank-mega': {
     name: '兆豐銀行',
