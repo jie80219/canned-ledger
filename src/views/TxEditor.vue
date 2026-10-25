@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ACCOUNT_TYPE_LABEL, byType } from '../domain/accounts'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { db } from '../db/schema'
@@ -285,16 +284,16 @@ const title = computed(() => (existing.value ? '編輯' : '記一筆'))
     <div class="list">
       <div class="field">
         <label>{{ kind === 'transfer' ? '轉出帳戶' : '帳戶' }}</label>
-        <USelect v-model="accountId">
-          <option v-for="a in byType(activeAccounts)" :key="a.id" :value="a.id" :data-icon="a.icon" :data-color="a.color" :data-group="ACCOUNT_TYPE_LABEL[a.type]">{{ a.name }}（{{ a.currency }}）</option>
-        </USelect>
+        <select v-model="accountId">
+          <option v-for="a in activeAccounts" :key="a.id" :value="a.id">{{ iconText(a.icon) }} {{ a.name }}（{{ a.currency }}）</option>
+        </select>
       </div>
       <div v-if="kind === 'transfer'" class="field">
         <label>轉入帳戶</label>
-        <USelect v-model="toAccountId">
+        <select v-model="toAccountId">
           <option value="" disabled>選擇帳戶</option>
-          <option v-for="a in byType(activeAccounts.filter((a) => a.id !== accountId))" :key="a.id" :value="a.id" :data-icon="a.icon" :data-color="a.color" :data-group="ACCOUNT_TYPE_LABEL[a.type]">{{ a.name }}（{{ a.currency }}）</option>
-        </USelect>
+          <option v-for="a in activeAccounts.filter((a) => a.id !== accountId)" :key="a.id" :value="a.id">{{ iconText(a.icon) }} {{ a.name }}（{{ a.currency }}）</option>
+        </select>
       </div>
       <div v-if="crossTransfer" class="field">
         <label>轉入金額</label>

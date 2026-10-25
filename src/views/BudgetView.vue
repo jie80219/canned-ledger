@@ -93,9 +93,9 @@ const lbl = (d: string) => d.slice(5).replace('-', '/')
     <div class="list">
       <div class="field">
         <label>每期起算日</label>
-        <USelect :model-value="book?.budgetStartDay ?? 1" title="預算起算日" @update:model-value="setStartDay(Number($event))">
+        <select :value="book?.budgetStartDay ?? 1" @change="setStartDay(Number(($event.target as HTMLSelectElement).value))">
           <option v-for="d in 28" :key="d" :value="d">每月 {{ d }} 號{{ d === 1 ? '（自然月）' : '' }}</option>
-        </USelect>
+        </select>
       </div>
     </div>
     <p class="help">本期 {{ lbl(period.start) }} – {{ lbl(period.end) }}，還剩 {{ daysLeft }} 天。發薪日不是 1 號的話，改成發薪日比較準。</p>
@@ -134,9 +134,9 @@ const lbl = (d: string) => d.slice(5).replace('-', '/')
       <div class="list">
         <div v-if="editing.categoryId === 'pick'" class="field">
           <label>分類</label>
-          <USelect v-model="pickCat">
-            <option v-for="c in freeCats" :key="c.id" :value="c.id" :data-icon="c.icon" :data-color="c.color">{{ c.name }}</option>
-          </USelect>
+          <select v-model="pickCat">
+            <option v-for="c in freeCats" :key="c.id" :value="c.id">{{ iconText(c.icon) }} {{ c.name }}</option>
+          </select>
         </div>
         <div class="field"><label>每期金額</label><input v-model="amountInput" inputmode="decimal" placeholder="0" /><span class="hint">{{ currency }}</span></div>
       </div>

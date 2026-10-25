@@ -187,7 +187,7 @@ button.row:active, a.row:active { background: var(--surface-2); }
 .field { display: flex; align-items: center; gap: 12px; padding: 10px 16px; min-height: 50px; }
 .field + .field { border-top: 1px solid var(--border); }
 .field > label, .field > .label { width: 96px; flex: none; color: var(--muted); font-size: 0.875rem; }
-.field input, .field textarea {
+.field input, .field select, .field textarea {
   flex: 1;
   min-width: 0;
   border: 0;
@@ -197,6 +197,7 @@ button.row:active, a.row:active { background: var(--surface-2); }
   font-size: 0.9375rem;
 }
 .field input[type='checkbox'] { flex: none; width: 20px; height: 20px; accent-color: var(--accent); }
+.field select { appearance: none; -webkit-appearance: none; }
 .field .hint { font-size: 0.75rem; color: var(--muted); }
 .help { font-size: 0.75rem; color: var(--muted); margin: -4px 8px 12px; }
 

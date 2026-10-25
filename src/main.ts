@@ -2,7 +2,6 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { registerSW } from 'virtual:pwa-register'
 import App from './App.vue'
-import USelect from './components/USelect.vue'
 import { router } from './router'
 import './styles.css'
 
@@ -12,4 +11,4 @@ registerSW({
   onRegisteredSW: (_url, r) => document.addEventListener('visibilitychange', () => document.visibilityState === 'visible' && r?.update()),
 })
 
-createApp(App).component('USelect', USelect).use(createPinia()).use(router).mount('#app')
+createApp(App).use(createPinia()).use(router).mount('#app')

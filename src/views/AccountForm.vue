@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ACCOUNT_TYPE_LABEL, byType } from '../domain/accounts'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { db, uid } from '../db/schema'
@@ -162,10 +161,10 @@ async function unarchive() {
     <div class="list">
       <div v-if="a.type !== 'cash'" class="field">
         <label>銀行</label>
-        <USelect v-model="bank">
-          <option v-for="(b, id) in BANKS" :key="id" :value="id" :data-icon="`svg:${id}`" :data-color="b.color">{{ b.name }}</option>
+        <select v-model="bank">
+          <option v-for="(b, id) in BANKS" :key="id" :value="id">{{ b.name }}</option>
           <option value="">其他</option>
-        </USelect>
+        </select>
       </div>
       <div class="field">
         <button class="icon-tap" @click="showIcons = true"><CatIcon :icon="a.icon" :color="a.color" :size="44" /></button>
@@ -179,9 +178,9 @@ async function unarchive() {
       </div>
       <div class="field">
         <label>幣別</label>
-        <USelect v-model="a.currency" :disabled="!isNew">
+        <select v-model="a.currency" :disabled="!isNew">
           <option v-for="c in CURRENCIES" :key="c.code" :value="c.code">{{ c.code }} {{ c.name }}</option>
-        </USelect>
+        </select>
       </div>
       <div class="field">
         <label>{{ a.type === 'credit' ? '未出帳金額' : isDebt ? '目前欠款' : '初始餘額' }}</label>
@@ -200,19 +199,19 @@ async function unarchive() {
       <div class="list">
         <div class="field">
           <label>結帳日</label>
-          <USelect v-model="a.credit.statementDay">
+          <select v-model.number="a.credit.statementDay">
             <option v-for="d in 31" :key="d" :value="d">每月 {{ d }} 號{{ d >= 29 ? '（小月取月底）' : '' }}</option>
-          </USelect>
+          </select>
         </div>
         <div class="field">
           <label>繳款日</label>
-          <USelect v-model="a.credit.dueMonthOffset" style="flex: 0 0 auto">
+          <select v-model.number="a.credit.dueMonthOffset" style="flex: 0 0 auto">
             <option :value="0">當月</option>
             <option :value="1">次月</option>
-          </USelect>
-          <USelect v-model="a.credit.dueDay">
+          </select>
+          <select v-model.number="a.credit.dueDay">
             <option v-for="d in 31" :key="d" :value="d">{{ d }} 號</option>
-          </USelect>
+          </select>
         </div>
         <div class="field">
           <label>信用額度</label>
@@ -247,10 +246,10 @@ async function unarchive() {
         <template v-if="a.credit.autopay !== 'off'">
           <div class="field">
             <label>扣款帳戶</label>
-            <USelect v-model="a.credit.payFromAccountId">
+            <select v-model="a.credit.payFromAccountId">
               <option :value="undefined" disabled>選擇銀行帳戶</option>
-              <option v-for="p in byType(payAccounts)" :key="p.id" :value="p.id" :data-icon="p.icon" :data-color="p.color" :data-group="ACCOUNT_TYPE_LABEL[p.type]">{{ p.name }}</option>
-            </USelect>
+              <option v-for="p in payAccounts" :key="p.id" :value="p.id">{{ iconText(p.icon) }} {{ p.name }}</option>
+            </select>
           </div>
           <div v-if="a.credit.autopay === 'minimum'" class="field">
             <label>最低應繳</label>

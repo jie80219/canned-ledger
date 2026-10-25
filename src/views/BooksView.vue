@@ -74,9 +74,9 @@ async function remove() {
         </div>
         <div class="field">
           <label>幣別</label>
-          <USelect v-model="edit.currency" :disabled="!isNew">
+          <select v-model="edit.currency" :disabled="!isNew">
             <option v-for="c in CURRENCIES" :key="c.code" :value="c.code">{{ c.code }} {{ c.name }}</option>
-          </USelect>
+          </select>
         </div>
       </div>
       <p v-if="isNew" class="help">會自動建立一個「現金」帳戶與預設分類。帳本幣別建立後不能改，統計會換算成這個幣別。</p>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ACCOUNT_TYPE_LABEL, byType } from '../domain/accounts'
 import { computed, onMounted, ref, shallowRef } from 'vue'
 import { db, getMeta, setMeta } from '../db/schema'
 import type { MerchantRule } from '../db/types'
@@ -194,16 +193,16 @@ async function doInvoiceImport() {
       <div class="list">
         <div class="field">
           <label>記到帳戶</label>
-          <USelect v-model="invAccount">
-            <option v-for="a in byType(accounts.filter((a) => !a.archived))" :key="a.id" :value="a.id" :data-icon="a.icon" :data-color="a.color" :data-group="ACCOUNT_TYPE_LABEL[a.type]">{{ a.name }}</option>
-          </USelect>
+          <select v-model="invAccount">
+            <option v-for="a in accounts.filter((a) => !a.archived)" :key="a.id" :value="a.id">{{ iconText(a.icon) }} {{ a.name }}</option>
+          </select>
         </div>
         <div class="field">
           <label>未分類時</label>
-          <USelect v-model="fallbackCat">
+          <select v-model="fallbackCat">
             <option value="">未分類</option>
-            <option v-for="c in expenseCats" :key="c.id" :value="c.id" :data-icon="c.icon" :data-color="c.color">{{ catLabel(c.id) }}</option>
-          </USelect>
+            <option v-for="c in expenseCats" :key="c.id" :value="c.id">{{ catLabel(c.id) }}</option>
+          </select>
         </div>
       </div>
       <div class="inv-list">
@@ -216,10 +215,10 @@ async function doInvoiceImport() {
             </div>
             <div class="sub">{{ r.inv.date }} · {{ r.inv.invoiceNo }}<template v-if="r.dup"> · 已匯入過</template></div>
             <div v-if="!r.dup" class="inv-cat">
-              <USelect v-model="r.categoryId">
+              <select v-model="r.categoryId">
                 <option :value="undefined">（預設）</option>
-                <option v-for="c in expenseCats" :key="c.id" :value="c.id" :data-icon="c.icon" :data-color="c.color">{{ catLabel(c.id) }}</option>
-              </USelect>
+                <option v-for="c in expenseCats" :key="c.id" :value="c.id">{{ catLabel(c.id) }}</option>
+              </select>
               <button v-if="r.categoryId" class="link" @click="rememberRule(r)">記住此店家</button>
             </div>
           </div>
@@ -238,7 +237,7 @@ label.row { cursor: pointer; }
 .inv-top { display: flex; justify-content: space-between; gap: 8px; }
 .ellipsis { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .inv-cat { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
-.inv-cat :deep(.u-select) { flex: 1; border: 1px solid var(--border); border-radius: 8px; padding: 4px 6px; background: var(--surface); font-size: 0.8125rem; }
+.inv-cat select { flex: 1; border: 1px solid var(--border); border-radius: 8px; padding: 4px 6px; background: var(--surface); font-size: 0.8125rem; }
 .link { border: 0; background: none; color: var(--accent); padding: 0; font-size: 0.75rem; white-space: nowrap; }
 .sub { font-size: 0.75rem; color: var(--muted); }
 </style>

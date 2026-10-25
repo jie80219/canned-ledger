@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ACCOUNT_TYPE_LABEL, byType } from '../domain/accounts'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { db, uid } from '../db/schema'
@@ -147,29 +146,29 @@ const FREQS: Array<[Freq, string]> = [
       <div class="field">
         <label>金額</label>
         <input v-model="amount" inputmode="decimal" placeholder="0" />
-        <USelect v-model="r.currency" :disabled="r.template.kind === 'transfer'" style="flex: 0 0 auto; width: auto">
+        <select v-model="r.currency" :disabled="r.template.kind === 'transfer'" style="flex: 0 0 auto; width: auto">
           <option v-for="c in CURRENCIES" :key="c.code" :value="c.code">{{ c.code }}</option>
-        </USelect>
+        </select>
       </div>
       <div class="field">
         <label>{{ r.template.kind === 'transfer' ? '轉出帳戶' : '帳戶' }}</label>
-        <USelect v-model="r.template.accountId">
-          <option v-for="a in byType(accounts.filter((a) => !a.archived))" :key="a.id" :value="a.id" :data-icon="a.icon" :data-color="a.color" :data-group="ACCOUNT_TYPE_LABEL[a.type]">{{ a.name }}（{{ a.currency }}）</option>
-        </USelect>
+        <select v-model="r.template.accountId">
+          <option v-for="a in accounts.filter((a) => !a.archived)" :key="a.id" :value="a.id">{{ iconText(a.icon) }} {{ a.name }}（{{ a.currency }}）</option>
+        </select>
       </div>
       <div v-if="r.template.kind === 'transfer'" class="field">
         <label>轉入帳戶</label>
-        <USelect v-model="r.template.toAccountId">
+        <select v-model="r.template.toAccountId">
           <option :value="undefined" disabled>選擇帳戶</option>
-          <option v-for="a in byType(accounts.filter((a) => !a.archived && a.id !== r.template.accountId && a.currency === account?.currency))" :key="a.id" :value="a.id" :data-icon="a.icon" :data-color="a.color" :data-group="ACCOUNT_TYPE_LABEL[a.type]">{{ a.name }}</option>
-        </USelect>
+          <option v-for="a in accounts.filter((a) => !a.archived && a.id !== r.template.accountId && a.currency === account?.currency)" :key="a.id" :value="a.id">{{ iconText(a.icon) }} {{ a.name }}</option>
+        </select>
       </div>
       <div v-else class="field">
         <label>分類</label>
-        <USelect v-model="r.template.categoryId">
+        <select v-model="r.template.categoryId">
           <option :value="undefined">未分類</option>
-          <option v-for="c in catOptions" :key="c.id" :value="c.id" :data-icon="c.icon" :data-color="c.color">{{ catLabel(c.id) }}</option>
-        </USelect>
+          <option v-for="c in catOptions" :key="c.id" :value="c.id">{{ catLabel(c.id) }}</option>
+        </select>
       </div>
       <div class="field"><label>備註</label><input v-model="r.template.note" maxlength="200" /></div>
     </div>
@@ -201,11 +200,11 @@ const FREQS: Array<[Freq, string]> = [
       <div class="field"><label>開始日期</label><input v-model="r.startDate" type="date" required /></div>
       <div class="field">
         <label>結束</label>
-        <USelect v-model="endMode">
+        <select v-model="endMode">
           <option value="never">永不</option>
           <option value="date">指定日期</option>
           <option value="count">指定次數</option>
-        </USelect>
+        </select>
       </div>
       <div v-if="endMode === 'date'" class="field"><label>結束日期</label><input v-model="r.endDate" type="date" /></div>
       <div v-if="endMode === 'count'" class="field"><label>總次數</label><input v-model.number="r.count" type="number" min="1" /><span class="hint">次</span></div>
