@@ -83,7 +83,7 @@ const lbl = (d: string) => d.slice(5).replace('-', '/')
 <template>
   <main v-if="account" class="page no-nav">
     <TopBar :title="account.name" back>
-      <RouterLink :to="`/swipe?from=${id}`" class="text-btn">轉帳</RouterLink>
+      <RouterLink :to="`/add?kind=transfer&account=${id}`" class="text-btn">轉帳</RouterLink>
       <RouterLink :to="`/accounts/${id}/edit`" class="icon-btn" aria-label="編輯">✎</RouterLink>
     </TopBar>
 
